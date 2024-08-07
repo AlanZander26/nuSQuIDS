@@ -365,6 +365,7 @@ if [ "$OS_NAME" = Linux ]; then
 	DYN_OPT='-shared -Wl,-soname,$(shell basename $(DYN_PRODUCT))'
 	DYN_OPT_PY='-shared -Wl,-soname,$(shell basename $(PYTHON_LIB))'
 fi
+
 if [ "$OS_NAME" = Darwin ]; then
 	GUESS_CC=clang
 	GUESS_CXX=clang++
@@ -719,6 +720,10 @@ EXAMPLES := examples/Single_energy/single_energy \
             examples/Constant_density_layers/const_dens_layers \
             examples/Astrophysical_neutrino_flavor_ratio/astro_flv_ratio
 
+
+TEVSGT := TeVSGT/tevsgt
+
+
 CXXFLAGS= -std=c++11
 
 # Directories
@@ -762,6 +767,7 @@ PYTHON_LIB:=lib/$(NAME).so
 all: $(STAT_PRODUCT) $(DYN_PRODUCT)
 
 examples : $(EXAMPLES)
+TeVSGT : $(TEVSGT)
 
 $(DYN_PRODUCT) : $(OBJECTS)
 	@echo Linking $(DYN_PRODUCT)
@@ -831,6 +837,19 @@ examples/Atm_BSM/atm_bsm: $(DYN_PRODUCT) examples/Atm_BSM/main.cpp
 examples/Constant_density_layers/const_dens_layers : $(DYN_PRODUCT) examples/Constant_density_layers/main.cpp
 	@echo Compiling constant density layer example
 	@$(CXX) $(EXAMPLES_FLAGS) examples/Constant_density_layers/main.cpp -lnuSQuIDS $(LDFLAGS) -o $@
+
+
+build/SM_Copies.o : TeVSGT/SM_Copies/SM_Copies.h TeVSGT/SM_Copies/SM_Copies.cpp
+	@$(CXX) $(EXAMPLES_FLAGS) -c TeVSGT/SM_Copies/SM_Copies.cpp -o $@
+
+build/ADD.o : TeVSGT/ADD/ADD.h TeVSGT/ADD/ADD.cpp
+	@$(CXX) $(EXAMPLES_FLAGS) -c TeVSGT/ADD/ADD.cpp -o $@
+
+TeVSGT/tevsgt : $(DYN_PRODUCT) TeVSGT/main.cpp build/SM_Copies.o build/ADD.o
+	@echo Compiling TeVSGT...
+	@$(CXX) $(EXAMPLES_FLAGS) TeVSGT/main.cpp build/SM_Copies.o build/ADD.o -lnuSQuIDS $(LDFLAGS) -o $@
+
+
 
 .PHONY: install uninstall clean test docs
 clean:
