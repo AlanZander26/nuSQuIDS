@@ -31,6 +31,8 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <complex>
+#include <gsl/gsl_complex.h>
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_matrix_complex_double.h>
@@ -419,6 +421,12 @@ void readH5Attribute(hid_t object, std::string name, T& dest){
 
 template<>
 void readH5Attribute<std::string>(hid_t object, std::string name, std::string& dest);
+
+// Added declaration for the to_gsl function
+gsl_complex to_gsl(const std::complex<double>& c);
+
+// Added declaration for the linspace_vec function
+std::vector<double> linspace_vec(double a, double b, unsigned int N);
 
 } // close namespace
 

@@ -15,10 +15,6 @@
   
  
 namespace nusquids {   
-    
-    auto to_gsl=[](const std::complex<double>& c)->gsl_complex {
-        return(gsl_complex_rect(c.real(),c.imag()));
-    };
 
     // Returns the usual PMNS matrix.
     std::unique_ptr<gsl_matrix_complex,void (*)(gsl_matrix_complex*)> nuSQUIDS_ADD::GetPMNS(double th12, double th13, double th23) {

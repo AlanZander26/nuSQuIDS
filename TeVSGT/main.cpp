@@ -1,4 +1,4 @@
-#define USE_SM
+#define USE_SM_COPIES
 // USE_ADD (ADD), USE_SM_COPIES (SM_Copies), USE_SM (SM)
 #include <vector>
 #include <iostream>
@@ -19,31 +19,6 @@
 
 
 using namespace nusquids;
-
-
-std::vector<double> linspace_vec(double a,double b,unsigned int N){
-  if(N==0)
-      throw std::length_error("number of samples requested from linspace must be nonzero");
-  std::vector<double> linpoints(N);
-  if(N==1){
-      if(a==b){
-          linpoints[0] = a;
-          return linpoints;
-      }
-      else{
-          throw std::invalid_argument("When N = 1, a and b must be equal.");
-      }
-  }
-  double step_lin = (b - a)/double(N-1);
-  
-  double c = a;
-  for(unsigned int i=0; i<N-1; i++, c+=step_lin)
-      linpoints[i] = c;
-  linpoints[N-1] = b;
-
-  return linpoints;
-}
-
 
 int main () {
 
