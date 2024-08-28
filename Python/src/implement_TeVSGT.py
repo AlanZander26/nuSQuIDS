@@ -57,20 +57,4 @@ def implement_model(model_type, params_ranges, E_range, medium_list, initial_flu
         text=True
     )
     
-    
-    # Print the output data
-    hdf5_file = os.path.expanduser(f"{TEVSGT_PATH}/outputfile.hdf5")
-    with h5py.File(hdf5_file, 'r') as hdf_file:
-        # Function to recursively print the structure of the HDF5 file
-        def print_structure(name, obj):
-            obj_type = "Group" if isinstance(obj, h5py.Group) else "Dataset"
-            print(f"{name}: {obj_type}")
-            
-            # If it's a dataset, print its shape and dtype
-            if isinstance(obj, h5py.Dataset):
-                print(f"  Shape: {obj.shape}, DataType: {obj.dtype}")
-
-        # Iterate over all objects in the file and print their structure
-        hdf_file.visititems(print_structure)
-    
     return

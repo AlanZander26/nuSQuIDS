@@ -1,8 +1,10 @@
-#define USE_ADD
+#define USE_SM_COPIES
 // USE_ADD (ADD), USE_SM_COPIES (SM_Copies), USE_SM (SM)
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <iomanip>
 #include <nuSQuIDS/nuSQuIDS.h>
 
 #ifdef USE_ADD
@@ -51,7 +53,7 @@ int main () {
   NeutrinoType neutrino_type; // Neutrino type ["neutrino", "antineutrino"]
   std::string NormalOrdering_str;
   bool NormalOrdering; // Ordering of the masses
-  int N_energy_grid = 200; // Number of the internal energy grid points of the nuSQuIDS object
+  int N_energy_grid = 100; // Number of the internal energy grid points of the nuSQuIDS object
   int Nen; // Number of energies we want the result
   std::cin >> E_min >> E_max >> medium >> medium_param_min >> medium_param_max >> N_medium_param
   >> neutrino_type_str >> NormalOrdering_str >> N_energy_grid >> Nen;
@@ -136,19 +138,11 @@ int main () {
       std::cout << "Error: invalid medium of propagation." << std::endl;
   }
     
-
     //Here we set the maximum size for the integration step, important for fast or sharp variations of the density.
     nus.Set_h_max( 500.0*units.km );
-
-    //We set the GSL step function
     nus.Set_GSL_step(gsl_odeiv2_step_rk4);
-
-    //Setting the numerical precision of gsl integrator.
     nus.Set_rel_error(1.0e-5);
     nus.Set_abs_error(1.0e-5);
-
-    //Set true the progress bar during the evolution.
-    //nus.Set_ProgressBar(true);
 
     //Construct the initial state
 
@@ -166,18 +160,24 @@ int main () {
           inistate[i][k] = 0.0;
         }
     } 
-
-
-    //Set the initial state in nuSQuIDS object
     nus.Set_initial_state(inistate,flavor);
-    //Propagate the neutrinos in the earth for the path defined in path
     nus.EvolveState();
 
-    // Naming the output file
-    std::string output_file = "outputfile.hdf5";
-    nus.WriteStateHDF5(output_file);
-  }
+    // Creating a dynamic file name based on parameters
+    std::ostringstream filename;
+    filename << std::fixed << std::setprecision(2);
+#ifdef USE_ADD
+    filename << "output_ADD_a_" << a << "_m0_" << m0 << "_";
+#elif defined(USE_SM_COPIES)
+    filename << "output_SM_Copies_N_" << N << "_mu_" << mu << "_m0_" << m0 << "_";
+#elif defined(USE_SM)
+    filename << "output_SM_";
+#endif
+    filename << "Emin_" << E_min << "_Emax_" << E_max << "_" << medium << "_";
+    filename << "Nengrid_" << N_energy_grid << ".hdf5";
 
+    nus.WriteStateHDF5(filename.str());
+  }
   std::cout << std::endl <<  "Done! " << std::endl;    
   return 0;
 }

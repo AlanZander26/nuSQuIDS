@@ -9,12 +9,21 @@ NU_SQUIDS_DIR="$(dirname "$TEVSGT_DIR")"
 # Navigate to the 'nuSQuIDS' directory, where the makefile is
 cd "$NU_SQUIDS_DIR"
 
-# Run 'make examples_AZ'
+# Run 'make TeVSGT'
 make TeVSGT
 
 # Navigate to the 'TeVSGT' directory
 cd "$TEVSGT_DIR"
 
-# Execute the OUT file
-./tevsgt
+# Create a temporary copy of the 'tevsgt' binary for this job
+TEMP_BINARY="./tevsgt_$$"
+cp ./tevsgt "$TEMP_BINARY"
 
+# Ensure the temporary binary is executable
+chmod +x "$TEMP_BINARY"
+
+# Run the temporary binary
+"$TEMP_BINARY"
+
+# Clean up by removing the temporary binary
+rm "$TEMP_BINARY"
