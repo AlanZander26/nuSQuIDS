@@ -178,6 +178,13 @@ int main () {
 
     nus.WriteStateHDF5(filename.str());
   }
-  std::cout << std::endl <<  "Done! " << std::endl;    
+  std::cout << std::endl <<  "Done! Merging HDF5 files..." << std::endl;    
+  const char* command = "python3 combine_hdf5.py";
+  int result = std::system(command);
+  if (result == 0) {
+        std::cout << "Done!." << std::endl;
+  } else {
+        std::cerr << "Failed to merge HDF5 files." << std::endl;
+  }
   return 0;
 }

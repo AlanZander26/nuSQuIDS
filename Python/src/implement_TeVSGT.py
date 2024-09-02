@@ -1,7 +1,6 @@
 import numpy as np
 import os
 import subprocess
-import h5py
 
 def implement_model(model_type, params_ranges, E_range, medium_list, initial_flux_ratios, neutrino_type="neutrino", NormalOrdering=True, Nen=200, Nen_grid=100):
     
