@@ -845,9 +845,12 @@ build/SM_Copies.o : TeVSGT/SM_Copies/SM_Copies.h TeVSGT/SM_Copies/SM_Copies.cpp
 build/ADD.o : TeVSGT/ADD/ADD.h TeVSGT/ADD/ADD.cpp
 	@$(CXX) $(EXAMPLES_FLAGS) -c TeVSGT/ADD/ADD.cpp -o $@
 
-TeVSGT/tevsgt : $(DYN_PRODUCT) TeVSGT/main.cpp build/SM_Copies.o build/ADD.o
+build/DarkDim.o : TeVSGT/DarkDim/DarkDim.h TeVSGT/DarkDim/DarkDim.cpp
+	@$(CXX) $(EXAMPLES_FLAGS) -c TeVSGT/DarkDim/DarkDim.cpp -o $@
+
+TeVSGT/tevsgt : $(DYN_PRODUCT) TeVSGT/main.cpp build/SM_Copies.o build/ADD.o build/DarkDim.o
 	@echo Compiling TeVSGT...
-	@$(CXX) $(EXAMPLES_FLAGS) TeVSGT/main.cpp build/SM_Copies.o build/ADD.o -lnuSQuIDS $(LDFLAGS) -o $@
+	@$(CXX) $(EXAMPLES_FLAGS) TeVSGT/main.cpp build/SM_Copies.o build/ADD.o build/DarkDim.o -lnuSQuIDS $(LDFLAGS) -o $@
 
 
 

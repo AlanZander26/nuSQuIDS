@@ -1,5 +1,5 @@
-#define USE_SM_COPIES
-// USE_ADD (ADD), USE_SM_COPIES (SM_Copies), USE_SM (SM)
+#define USE_DARKDIM
+// USE_ADD (ADD), USE_SM_COPIES (SM_Copies), USE_DARKDIM (DarkDim), USE_SM (SM)
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -10,6 +10,9 @@
 
 #elif defined(USE_SM_COPIES)
 #include "SM_Copies/SM_Copies.h"
+
+#elif defined(USE_DARKDIM)
+#include "DarkDim/DarkDim.h"
 
 #elif defined(USE_SM)
 #else 
@@ -53,6 +56,26 @@ int main () {
   double N;
   double mu;
   double m0;
+#elif defined(USE_DARKDIM)
+  double a_min, a_max; // Radius range of largest extra dimension [micro m]
+  unsigned int N_a; // # of bins in dimension "a"
+  double m0_min, m0_max; // Mass range of lightest neutrino in the SM [eV]
+  unsigned int N_m0; // # of bins in dimension "m0"
+  double ca1_min, ca1_max, ca2_min, ca2_max, ca3_min, ca3_max; // Components of vector ca.
+  unsigned int N_ca1, N_ca2, N_ca3; // # of bins in dimensions ca1, ca2, ca3, the components of ca.
+  std::cin >> a_min >> a_max >> N_a >> m0_min >> m0_max >> N_m0 >> ca1_min >> ca1_max >> N_ca1 >> ca2_min >> ca2_max >> N_ca2 >> ca3_min >> ca3_max >> N_ca3; 
+  unsigned int N_KK = 2;
+  unsigned int numneu = 3*(N_KK + 1); 
+  
+  std::vector<double> a_vec = linspace_vec(a_min, a_max, N_a);
+  std::vector<double> m0_vec = linspace_vec(m0_min, m0_max, N_m0);
+  std::vector<double> ca1_vec = linspace_vec(ca1_min, ca1_max, N_ca1);
+  std::vector<double> ca2_vec = linspace_vec(ca2_min, ca2_max, N_ca2);
+  std::vector<double> ca3_vec = linspace_vec(ca3_min, ca3_max, N_ca3);
+
+  double a;
+  double m0;
+  double ca1, ca2, ca3;
 #elif defined(USE_SM)
   unsigned int numneu = 3;
 #endif
@@ -133,6 +156,21 @@ int main () {
             for(int l = 0; l < N_N; ++l) {
                 N = N_vec[l];
                 nuSQUIDS_SM_Copies nus(logspace(E_min*units.GeV,E_max*units.GeV,N_energy_grid), N, mu, m0, NormalOrdering, numneu, neutrino_type);
+
+#elif defined(USE_DARKDIM)
+    
+    for(int ca3_i = 0; ca3_i < N_ca3; ++ca3_i) {
+      ca3 = ca3_vec[ca3_i];
+      for(int ca2_i = 0; ca2_i < N_ca2; ++ca2_i) {
+        ca2 = ca2_vec[ca2_i];
+        for(int ca1_i = 0; ca1_i < N_ca1; ++ca1_i) {
+          ca1 = ca1_vec[ca1_i];
+          std::array<double, 3> ca = {ca1, ca2, ca3};
+          for(int j = 0; j < N_m0; ++j) {
+              m0 = m0_vec[j];
+              for(int k = 0; k < N_a; ++k) {
+                  a = a_vec[k];
+                  nuSQUIDS_DarkDim nus(logspace(E_min*units.GeV,E_max*units.GeV,N_energy_grid), N_KK, a, m0, ca, NormalOrdering, neutrino_type);
 
 #elif defined(USE_SM)
     nuSQUIDS nus(logspace(E_min*units.GeV,E_max*units.GeV,N_energy_grid), numneu, neutrino_type, false);
@@ -216,6 +254,9 @@ int main () {
           #elif defined(USE_SM_COPIES)
           file << "# Energy[GeV] Prob_e Prob_mu Prob_tau " << "(N = " << N << ", mu = " << mu << ", m0 [eV] = " << m0 << ", medium_param = " << medium_param << ")" << std::endl;
 
+          #elif defined(USE_DARKDIM)
+          file << "# Energy[GeV] Prob_e Prob_mu Prob_tau " << "(a [um] = " << a << ", m0 [eV] = " << m0 << ", ca1 = " << ca1 << ", ca2 = " << ca2 << ", ca3 = " << ca3 << ", medium_param = " << medium_param << ")" << std::endl;
+
           #elif defined(USE_SM)
           file << "# Energy[GeV] Prob_e Prob_mu Prob_tau " << "(medium_param = " << medium_param << ")" << std::endl;
 
@@ -234,9 +275,15 @@ int main () {
         }
     }
 #elif defined(USE_SM_COPIES)
+        }
       }
     }
-  }
+#elif defined(USE_DARKDIM)
+            }
+          }
+        }
+      }
+    }
 #elif defined(USE_SM)
 #endif
   }

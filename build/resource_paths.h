@@ -1,5 +1,5 @@
 #include <cstring>
-#define SOURCE_DATA_PATH "/home/aurruty/Master/MasterThesis/nuSQuIDS/data/"
+#define SOURCE_DATA_PATH "/home/alan/PhD/IceCube_Analysis/nuSQuIDS/data/"
 #define INSTALL_DATA_PATH "/usr/local/share/nuSQuIDS/"
 
 namespace{
