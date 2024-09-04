@@ -1,4 +1,4 @@
-#define USE_SM_COPIES
+#define USE_ADD
 // USE_ADD (ADD), USE_SM_COPIES (SM_Copies), USE_SM (SM)
 #include <vector>
 #include <iostream>
@@ -165,7 +165,7 @@ int main () {
 
     // Creating a dynamic file name based on parameters
     std::ostringstream filename;
-    filename << std::fixed << std::setprecision(2);
+    filename << std::fixed << std::setprecision(5);
 #ifdef USE_ADD
     filename << "output_ADD_a_" << a << "_m0_" << m0 << "_";
 #elif defined(USE_SM_COPIES)
@@ -173,7 +173,7 @@ int main () {
 #elif defined(USE_SM)
     filename << "output_SM_";
 #endif
-    filename << "Emin_" << E_min << "_Emax_" << E_max << "_" << medium << "_";
+    filename << "Emin_" << E_min << "_Emax_" << E_max << "_CosTheta_" << medium_param << "_";
     filename << "Nengrid_" << N_energy_grid << ".hdf5";
 
     nus.WriteStateHDF5(filename.str());
