@@ -1,5 +1,9 @@
 #include <cstring>
+<<<<<<< HEAD
 #define SOURCE_DATA_PATH "/home/alan/PhD/IceCube_Analysis/nuSQuIDS/data/"
+=======
+#define SOURCE_DATA_PATH "/home/agurruty/Projects/MasterThesis/nuSQuIDS/data/"
+>>>>>>> d75229f7f4a6e21fe7524df41cdf3d61b0449dd6
 #define INSTALL_DATA_PATH "/usr/local/share/nuSQuIDS/"
 
 namespace{
