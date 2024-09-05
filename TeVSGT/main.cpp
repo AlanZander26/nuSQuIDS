@@ -13,6 +13,9 @@
 #elif defined(USE_SM_COPIES)
 #include "SM_Copies/SM_Copies.h"
 
+#elif defined(USE_DARKDIM)
+#include "DarkDim/DarkDim.h"
+
 #elif defined(USE_SM)
 #else 
 #error "Error: Model type not defined."
@@ -39,6 +42,15 @@ int main () {
   double m0; // Mass of lightest neutrino in the SM [eV]
   std::cin >> N >> mu >> m0;
   unsigned int numneu = 6;
+
+#elif defined(USE_DARKDIM)
+  double a; // Radius of largest extra dimension [micro m]
+  double m0; // Mass of lightest neutrino in the SM [eV]
+  double double ca1, ca2, ca3; // Components of vector ca.
+  std::cin >> a >> m0 >> ca1 >> ca2 >> ca3; 
+  unsigned int N_KK = 2;
+  unsigned int numneu = 3*(N_KK + 1); 
+  std::array<double, 3> ca = {ca1, ca2, ca3};
 
 #elif defined(USE_SM)
   unsigned int numneu = 3;
@@ -107,6 +119,9 @@ int main () {
 #elif defined(USE_SM_COPIES)
     nuSQUIDS_SM_Copies nus(logspace(E_min*units.GeV,E_max*units.GeV,N_energy_grid), N, mu, m0, NormalOrdering, numneu, neutrino_type);
 
+#elif defined(USE_DARKDIM)
+    nuSQUIDS_DarkDim nus(logspace(E_min*units.GeV,E_max*units.GeV,N_energy_grid), N_KK, a, m0, ca, NormalOrdering, neutrino_type);
+
 #elif defined(USE_SM)
     nuSQUIDS nus(logspace(E_min*units.GeV,E_max*units.GeV,N_energy_grid), numneu, neutrino_type, false);
 
@@ -170,6 +185,8 @@ int main () {
     filename << "output_ADD_a_" << a << "_m0_" << m0 << "_";
 #elif defined(USE_SM_COPIES)
     filename << "output_SM_Copies_N_" << N << "_mu_" << mu << "_m0_" << m0 << "_";
+ #elif defined(USE_DARKDIM)
+      filename << "output_DarkDim_a_" << a << "_m0_" << m0 << "_ca1_" << ca1 << "_ca2_" << ca2 << "_ca3_" << ca3 << "_";
 #elif defined(USE_SM)
     filename << "output_SM_";
 #endif
