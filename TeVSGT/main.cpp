@@ -1,4 +1,4 @@
-#define USE_ADD
+#define USE_DARKDIM
 // USE_ADD (ADD), USE_SM_COPIES (SM_Copies), USE_SM (SM)
 #include <vector>
 #include <iostream>
@@ -46,7 +46,7 @@ int main () {
 #elif defined(USE_DARKDIM)
   double a; // Radius of largest extra dimension [micro m]
   double m0; // Mass of lightest neutrino in the SM [eV]
-  double double ca1, ca2, ca3; // Components of vector ca.
+  double ca1, ca2, ca3; // Components of vector ca.
   std::cin >> a >> m0 >> ca1 >> ca2 >> ca3; 
   unsigned int N_KK = 2;
   unsigned int numneu = 3*(N_KK + 1); 

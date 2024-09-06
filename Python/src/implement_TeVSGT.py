@@ -2,7 +2,7 @@ import numpy as np
 import os
 import subprocess
 
-def implement_model(model_type, params_ranges, E_range, medium_list, initial_flux_ratios, neutrino_type="neutrino", NormalOrdering=True, Nen=200, Nen_grid=100):
+def implement_model(model_type, params, E_range, medium_list, initial_flux_ratios, neutrino_type="neutrino", NormalOrdering=True, Nen=200, Nen_grid=100):
     
     str_sed = '1c\\#define USE_' + model_type.upper()  
     nuSQuIDS_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -14,12 +14,7 @@ def implement_model(model_type, params_ranges, E_range, medium_list, initial_flu
         text=True
     )
     
-    # Convert parameters for the models into their correct types
-    for sublist in params_ranges:
-        sublist[0] = float(sublist[0])  # a or N
-        sublist[1] = float(sublist[1])  # m0
-        if len(sublist) == 3:
-            sublist[2] = float(sublist[2])  # mu (if applicable)
+    params = [float(p) for p in params]
         
     # Process energy range
     E_range = np.array(E_range, dtype=float)
@@ -40,9 +35,8 @@ def implement_model(model_type, params_ranges, E_range, medium_list, initial_flu
     
     # Construct the input string for the bash script
     input_str = ""
-    for sublist in params_ranges:
-        for param in sublist:
-            input_str += f"{param}\n"
+    for param in params:
+        input_str += f"{param}\n"
     
     input_str += f"{E_min}\n{E_max}\n{medium}\n{medium_param_min}\n{medium_param_max}\n{N_medium_param}\n{neutrino_type}\n{NormalOrdering}\n{Nen_grid}\n{Nen}\n"
     
