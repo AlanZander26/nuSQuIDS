@@ -41,9 +41,10 @@ FILE_CPP=$1
 INPUT_FLUX=$2
 INPUT_EARTH=$3
 OUTPUT_PATH=$4
-a=$5
-m0=$6
-NORMALORDERING=$7
+FLUX_NAME=$5
+a=$6
+m0=$7
+NORMALORDERING=$8
 
 # Compile main program with ADD.o linked
 echo "Compiling the main program and linking ADD.o..."
@@ -57,8 +58,8 @@ else
 fi
 
 # Check if correct number of arguments are passed
-if [ "$#" -ne 7 ]; then
-    echo "Usage: $0 <FILE_CPP> <INPUT_FLUX> <INPUT_EARTH> <OUTPUT_PATH> <a> <m0> <NORMALORDERING>"
+if [ "$#" -ne 8 ]; then
+    echo "Usage: $0 <FILE_CPP> <INPUT_FLUX> <INPUT_EARTH> <OUTPUT_PATH> <FLUX_NAME> <a> <m0> <NORMALORDERING>"
     exit 1
 fi
 
@@ -74,7 +75,7 @@ fi
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/alan/anaconda3/lib
 
 # Run the executable with the provided arguments
-$EXECUTABLE $INPUT_FLUX $INPUT_EARTH $OUTPUT_PATH $INDEX $a $m0 $NORMALORDERING
+$EXECUTABLE $INPUT_FLUX $INPUT_EARTH $OUTPUT_PATH $FLUX_NAME $a $m0 $NORMALORDERING
 
 # Check if the program executed successfully
 if [ $? -ne 0 ]; then

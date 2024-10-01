@@ -14,20 +14,21 @@ int main(int argc, char* argv[]){
   NeutrinoType neutrino_type;
   bool iinteraction = true; // Otherwise we get: 'std::runtime_error' what():  nuSQUIDS::Error::nuSQuIDs has been initialized without interactions, thus tau regeneration cannot be enabled.
   neutrino_type = both; // If we do not set "both", we get: 'std::runtime_error' what():  nuSQUIDS::Error::Cannot set TauRegeneration to True when NT != 'both'.//neutrino; // Change this to accept also antineutrino or both. 
-  unsigned int N_KK = 2;
+  unsigned int N_KK = 1;
   unsigned int numneu = 3*(N_KK+1);
   std::string input_flux_path, input_earth_path;
-  std::string output_path;
-  if(argc != 7){
-      printf("ERROR:USAGE: the amount of arguments must be 6. \n");
+  std::string output_path, flux_name;
+  if(argc != 8){
+      printf("ERROR:USAGE: the amount of arguments must be 7. \n");
       exit(0);
   } else {
       input_flux_path  = argv[1];
       input_earth_path = argv[2];
       output_path      = argv[3];
-      a                = atof(argv[4]);
-      m0               = atof(argv[5]);
-      NormalOrdering   = argv[6];
+      flux_name        = argv[4]; // The flux name is not needed for this script but is kept to mantain the same format as the other cpp files. >
+      a                = atof(argv[5]);
+      m0               = atof(argv[6]);
+      NormalOrdering   = argv[7];
 
   }
   if(output_path[output_path.length()-1]!='/'){

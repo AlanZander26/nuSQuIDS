@@ -16,35 +16,37 @@ int main(int argc, char* argv[]){
   bool iinteraction = true; // Otherwise I get: 'std::runtime_error' what():  nuSQUIDS::Error::nuSQuIDs has been initialized without interactions, thus tau regeneration cannot be enabled.
   unsigned int N_KK;
   unsigned int numneu;
-  std::string input_flux_path, input_earth_path;
-  std::string output_path, flux_name;
+  std::string input_flux_dir, input_earth_path;
+  std::string flux_name;
+  std::string output_path;
   if(argc != 8){
       printf("ERROR:USAGE: the amount of arguments must be 7. \n");
       exit(0);
   } else {
-      input_flux_path  = argv[1];
+      input_flux_dir  = argv[1];
       input_earth_path = argv[2];
       output_path      = argv[3];
-      flux_name        = argv[4]; // The flux name is not needed for this script but is kept to mantain the same format as the other cpp files. >
+      flux_name        = argv[4];
       a                = atof(argv[5]);
       m0               = atof(argv[6]);
       NormalOrdering   = argv[7];
       neutrino_type = both; // If I do not set "both", I get: 'std::runtime_error' what():  nuSQUIDS::Error::Cannot set TauRegeneration to True when NT != 'both'.//neutrino; // Change this to accept also antineutrino or both. 
-      N_KK             = 1;
+      N_KK             = 2;
       numneu = 3*(N_KK+1);
 
   }
   if(output_path[output_path.length()-1]!='/'){
     output_path = output_path +'/';}
 
-  std::cout<<"Inpath Flux: "<<input_flux_path<<std::endl;
+  std::cout<<"Indir Flux: "<<input_flux_dir<<std::endl;
   std::cout<<"Inpath Earth: "<<input_earth_path<<std::endl;
   std::cout<<"Outpath: "<<output_path<<std::endl;
+  std::cout<<"Flux name: "<<flux_name<<std::endl;
     
   const squids::Const units;
   nuSQUIDSAtm<nuSQUIDS_ADD> nus_atm(linspace(-1.,0.2,100),logspace(1.e2*units.GeV,1.e6*units.GeV,350), N_KK, a, m0, NormalOrdering, neutrino_type, iinteraction);
 
-  std::shared_ptr<EarthAtm> earth = std::make_shared<EarthAtm>(input_earth_path); // I think here input_earth_path can be the PREM file. Otherwise try to initialize it without path.
+  std::shared_ptr<EarthAtm> earth = std::make_shared<EarthAtm>(input_earth_path); 
   nus_atm.Set_EarthModel(earth);
 
   nus_atm.Set_TauRegeneration(true);
@@ -59,7 +61,7 @@ int main(int argc, char* argv[]){
 
 
   // loading kaon and pion flux files
-  marray<double,2> input_flux = quickread(input_flux_path); // Maybe at the beginning we can leave this empty? This seems to be loading hadronic files.
+  marray<double,2> input_flux = quickread(input_flux_dir+"/ddm_"+flux_name+".dat"); 
 
   // construct the kaon initial state
    marray<double,4> inistate {nus_atm.GetNumCos(),nus_atm.GetNumE(),2,numneu};
@@ -79,12 +81,12 @@ int main(int argc, char* argv[]){
 
        inistate[ci][ei][0][0] = input_flux[ci*e_range.size() + ei][2];
        inistate[ci][ei][0][1] = input_flux[ci*e_range.size() + ei][4];
-       inistate[ci][ei][0][2] = 0.;
+       inistate[ci][ei][0][2] = input_flux[ci*e_range.size() + ei][6];
        inistate[ci][ei][0][3] = 0.;
 
        inistate[ci][ei][1][0] = input_flux[ci*e_range.size() + ei][3];
        inistate[ci][ei][1][1] = input_flux[ci*e_range.size() + ei][5];
-       inistate[ci][ei][1][2] = 0.;
+       inistate[ci][ei][1][2] = input_flux[ci*e_range.size() + ei][7];
        inistate[ci][ei][1][3] = 0.;
      }
    }
@@ -106,7 +108,7 @@ int main(int argc, char* argv[]){
      }
    }
 
-  nus_atm.WriteStateHDF5(output_path+"/atmospheric_"+"ADD_"+std::to_string(a)+"_"+std::to_string(m0)+".hdf5");
+  nus_atm.WriteStateHDF5(output_path+"/"+flux_name+"_ADD_"+std::to_string(a)+"_"+std::to_string(m0)+".hdf5");
 
   std::cout << "finish" << std::endl;
 

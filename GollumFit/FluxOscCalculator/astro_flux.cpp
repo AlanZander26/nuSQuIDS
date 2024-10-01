@@ -18,17 +18,18 @@ int main(int argc, char* argv[]){
   unsigned int N_KK = 2;
   unsigned int numneu = 3*(N_KK+1);
   std::string input_flux_path, input_earth_path;
-  std::string output_path;
-  if(argc != 7){
-      printf("ERROR:USAGE: the amount of arguments must be 6. \n");
+  std::string output_path, flux_name;
+  if(argc != 8){
+      printf("ERROR:USAGE: the amount of arguments must be 7. \n");
       exit(0);
   } else {
       input_flux_path  = argv[1]; // This path is not needed for this script but is kept to mantain the same format as the other cpp files.
       input_earth_path = argv[2];
       output_path      = argv[3];
-      a                = atof(argv[4]);
-      m0               = atof(argv[5]);
-      NormalOrdering   = argv[6];
+      flux_name        = argv[4]; // The flux name is not needed for this script but is kept to mantain the same format as the other cpp files. >
+      a                = atof(argv[5]);
+      m0               = atof(argv[6]);
+      NormalOrdering   = argv[7];
 
   }
   if(output_path[output_path.length()-1]!='/'){
