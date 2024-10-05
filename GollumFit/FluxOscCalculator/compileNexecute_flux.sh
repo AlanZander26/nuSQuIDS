@@ -4,26 +4,23 @@
 CXX=g++
 CXXFLAGS="-std=c++11"
 
-# Include directories
-GSL_CFLAGS=""
-GSL_LDFLAGS="-lgsl -lgslcblas -lm"
-HDF5_CFLAGS="-I/home/alan/anaconda3/include"
-HDF5_LDFLAGS="-L/home/alan/anaconda3/lib -lhdf5_hl -lhdf5 -L/home/alan/anaconda3/lib -Wl,-O2 -Wl,--sort-common -Wl,--as-needed"
-SQUIDS_CFLAGS="-Wno-abi -I/usr/local/include"
-SQUIDS_LDFLAGS="-L/usr/local/lib -lSQuIDS -lgsl -lgslcblas -lm"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# nuSQuIDS paths
-PATH_nuSQUIDS="/home/alan/PhD/IceCube_Analysis/nuSQuIDS"
-INCnuSQUIDS="$PATH_nuSQUIDS/include"
-LIBnuSQUIDS="$PATH_nuSQUIDS/lib"
+# Set PATH_nuSQUIDS to two levels up from the script's directory
+PATH_nuSQUIDS=$(realpath "$SCRIPT_DIR/../..")
+
+# Go to nuSQuIDS directory
+cd $PATH_nuSQUIDS
+
+eval $(sed -n '/^GSL_CFLAGS=/,/^LIBnuSQUIDS=/p' $PATH_nuSQUIDS/Makefile \
+    | sed 's/=\(.*\)/="\1"/' \
+    | sed 's/\$(\([a-zA-Z_][a-zA-Z0-9_]*\))/\${\1}/g'
+)
 
 # Compilation and linker flags
 CFLAGS="-O2 -fPIC -Ibuild -I$INCnuSQUIDS $SQUIDS_CFLAGS $GSL_CFLAGS $HDF5_CFLAGS" # Change O3 to O2
 LDFLAGS="-Wl,-rpath -Wl,$LIBnuSQUIDS -L$LIBnuSQUIDS"
 LDFLAGS+=" $SQUIDS_LDFLAGS $GSL_LDFLAGS $HDF5_LDFLAGS -lpthread"
-
-# Go to nuSQuIDS directory
-cd $PATH_nuSQUIDS
 
 # Compile ADD.cpp into object file
 echo "Compiling ADD.cpp into ADD.o..."
@@ -72,7 +69,6 @@ if [ ! -f "$EXECUTABLE" ]; then
     exit 1
 fi
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/alan/anaconda3/lib
 
 # Run the executable with the provided arguments
 $EXECUTABLE $INPUT_FLUX $INPUT_EARTH $OUTPUT_PATH $FLUX_NAME $a $m0 $NORMALORDERING
@@ -87,3 +83,5 @@ fi
 
 # Erase executable
 rm $EXECUTABLE
+
+# Example of usage: bash compileNexecute_flux.sh prompt_atmospheric_flux.cpp GollumFit/FluxOscCalculator/AIRS_mceq121_pr_flux_2011_sib_HG_E3.dat GollumFit/FluxOscCalculator/EARTH_MODEL_PREM.dat GollumFit/FluxOscCalculator/Fluxes "new_ddm" 0.5 0.0 true
