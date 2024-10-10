@@ -4,7 +4,7 @@
 #include <nuSQuIDS/nuSQuIDS.h>
 #include <nuSQuIDS/marray.h>
 #include "ADD/ADD.h" // Change for another model.
-// The following command is still not working for the compilation: gcc conventional_atmospheric_flux.cpp -I/usr/include/hdf5/serial -I../../TeVSGT/ADD -L/usr/lib/x86_64-linux-gnu -lhdf5_serial -lhdf5_cpp -lpthread
+
 
 using namespace nusquids;
 

@@ -1,15 +1,7 @@
 
 export CXX="g++"
-<<<<<<< HEAD
-export CFLAGS=" -I/home/alan/PhD/IceCube_Analysis/nuSQuIDS/inlude -Wno-abi -I/usr/local/include  -I/home/alan/anaconda3/include"
+export CFLAGS=" -I/home/aurruty/GOLEMSOURCE/sources/nuSQuIDS/inlude -I/home/aurruty/GOLEMSOURCE/local/include -Wno-abi -I/cvmfs/icecube.opensciencegrid.org/py3-v4.1.1/RHEL_7_x86_64/spack/opt/spack/linux-centos7-x86_64/gcc-9.2.0spack/gsl-2.6-vukyyg6oxkjx4i4grxd333rkcg4f4zpe/include -I/cvmfs/icecube.opensciencegrid.org/py3-v4.1.1/RHEL_7_x86_64/spack/opt/spack/linux-centos7-x86_64/gcc-9.2.0spack/hdf5-1.10.5-tzqwgit6tpz6facq4b3kuuudvcygayc4/lib/../include"
 export CXXFLAGS=" -std=c++11"
-export LDFLAGS=" -L/home/alan/PhD/IceCube_Analysis/nuSQuIDS/lib -Wl,-rpath -Wl,/home/alan/PhD/IceCube_Analysis/nuSQuIDS/lib -lnuSQuIDS -lpthread -L/usr/local/lib -lSQuIDS -lgsl -lgslcblas -lm -lgsl -lgslcblas -lm -L/home/alan/anaconda3/lib -lhdf5_hl -lhdf5 -L/home/alan/anaconda3/lib -Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,-rpath,/home/alan/anaconda3/lib -Wl,-rpath-link,/home/alan/anaconda3/lib -L/home/alan/anaconda3/lib -lrt -lpthread -lz -ldl -lm -Wl,-rpath -Wl,/home/alan/anaconda3/lib"
+export LDFLAGS=" -L/home/aurruty/GOLEMSOURCE/sources/nuSQuIDS/lib -Wl,-rpath -Wl,/home/aurruty/GOLEMSOURCE/sources/nuSQuIDS/lib -lnuSQuIDS -lpthread -L/home/aurruty/GOLEMSOURCE/local/lib -lSQuIDS -L/cvmfs/icecube.opensciencegrid.org/py3-v4.1.1/RHEL_7_x86_64/spack/opt/spack/linux-centos7-x86_64/gcc-9.2.0spack/gsl-2.6-vukyyg6oxkjx4i4grxd333rkcg4f4zpe/lib -lgsl -lgslcblas -lm -L/cvmfs/icecube.opensciencegrid.org/py3-v4.1.1/RHEL_7_x86_64/spack/opt/spack/linux-centos7-x86_64/gcc-9.2.0spack/hdf5-1.10.5-tzqwgit6tpz6facq4b3kuuudvcygayc4/lib -lhdf5_hl -lhdf5 -L/cvmfs/icecube.opensciencegrid.org/py3-v4.1.1/RHEL_7_x86_64/spack/opt/spack/linux-centos7-x86_64/gcc-9.2.0spack/zlib-1.2.11-64u2zrto57c3z62v7uluxqqdkpjsdewd/lib -lz -ldl -lm -Wl,-rpath -Wl,/cvmfs/icecube.opensciencegrid.org/py3-v4.1.1/RHEL_7_x86_64/spack/opt/spack/linux-centos7-x86_64/gcc-9.2.0spack/hdf5-1.10.5-tzqwgit6tpz6facq4b3kuuudvcygayc4/lib"
 
-export LD_LIBRARY_PATH="/home/alan/PhD/IceCube_Analysis/nuSQuIDS/lib:/usr/local/lib:/usr/lib/x86_64-linux-gnu:/home/alan/anaconda3/lib"
-=======
-export CFLAGS=" -I/home/agurruty/Projects/MasterThesis/nuSQuIDS/inlude -Wno-abi -I/usr/local/include  -I/usr/include/hdf5/serial"
-export CXXFLAGS=" -std=c++11"
-export LDFLAGS=" -L/home/agurruty/Projects/MasterThesis/nuSQuIDS/lib -Wl,-rpath -Wl,/home/agurruty/Projects/MasterThesis/nuSQuIDS/lib -lnuSQuIDS -lpthread -L/usr/local/lib -lSQuIDS -lgsl -lgslcblas -lm -lgsl -lgslcblas -lm -L/usr/lib/x86_64-linux-gnu/hdf5/serial -lhdf5 -lhdf5_hl"
-
-export LD_LIBRARY_PATH="/home/agurruty/Projects/MasterThesis/nuSQuIDS/lib:/usr/local/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/hdf5/serial:/home/agurruty/Projects/SciComputing/root_install/lib"
->>>>>>> d75229f7f4a6e21fe7524df41cdf3d61b0449dd6
+export LD_LIBRARY_PATH="/home/aurruty/GOLEMSOURCE/sources/nuSQuIDS/lib:/home/aurruty/GOLEMSOURCE/local/lib:/cvmfs/icecube.opensciencegrid.org/py3-v4.1.1/RHEL_7_x86_64/spack/opt/spack/linux-centos7-x86_64/gcc-9.2.0spack/gsl-2.6-vukyyg6oxkjx4i4grxd333rkcg4f4zpe/lib:/cvmfs/icecube.opensciencegrid.org/py3-v4.1.1/RHEL_7_x86_64/spack/opt/spack/linux-centos7-x86_64/gcc-9.2.0spack/hdf5-1.10.5-tzqwgit6tpz6facq4b3kuuudvcygayc4/lib:/home/aurruty/GOLEMSOURCE/local/lib/:/cvmfs/icecube.opensciencegrid.org/py3-v4.1.1/RHEL_7_x86_64/lib:/cvmfs/icecube.opensciencegrid.org/py3-v4.1.1/RHEL_7_x86_64/lib64:/cvmfs/icecube.opensciencegrid.org/py3-v4.1.1/RHEL_7_x86_64/lib:/cvmfs/icecube.opensciencegrid.org/py3-v4.1.1/RHEL_7_x86_64/lib64:/usr/lib64:/:/:/:/:/usr/lib64:/:/:/:/"

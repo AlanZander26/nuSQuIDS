@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export LD_LIBRARY_PATH=~/GOLEMSOURCE/local/lib:$LD_LIBRARY_PATH
 # Compiler and flags
 CXX=g++
 CXXFLAGS="-std=c++11"
