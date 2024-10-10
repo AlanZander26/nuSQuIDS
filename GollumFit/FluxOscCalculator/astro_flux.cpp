@@ -5,6 +5,7 @@
 #include <nuSQuIDS/marray.h>
 #include <LeptonWeighter/Flux.h>
 #include <LeptonWeighter/nuSQFluxInterface.h>
+#include "ADD/ADD.h"
 
 using namespace nusquids;
 
