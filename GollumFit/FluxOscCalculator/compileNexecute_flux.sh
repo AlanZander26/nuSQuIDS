@@ -48,9 +48,11 @@ OUTPUT_PATH=${SCRIPT_DIR}/Fluxes/$point
 
 mkdir -p $OUTPUT_PATH
 
+NAME_EXECUTABLE=flux_output_${FILE_CPP}_${point}
+
 # Compile main program with ADD.o linked
 echo "Compiling the main program and linking ADD.o..."
-$CXX $CXXFLAGS $CFLAGS GollumFit/FluxOscCalculator/$FILE_CPP build/ADD.o -I$PATH_nuSQUIDS/TeVSGT -lnuSQuIDS $LDFLAGS -o GollumFit/FluxOscCalculator/flux_output
+$CXX $CXXFLAGS $CFLAGS GollumFit/FluxOscCalculator/$FILE_CPP build/ADD.o -I$PATH_nuSQUIDS/TeVSGT -lnuSQuIDS $LDFLAGS -o GollumFit/FluxOscCalculator/$NAME_EXECUTABLE
 
 if [ $? -eq 0 ]; then
     echo "Successfully compiled and linked the program."
@@ -66,7 +68,7 @@ if [ "$#" -ne 7 ]; then
 fi
 
 # Path to the executable
-EXECUTABLE="$PATH_nuSQUIDS/GollumFit/FluxOscCalculator/flux_output"
+EXECUTABLE="$PATH_nuSQUIDS/GollumFit/FluxOscCalculator/$NAME_EXECUTABLE"
 
 # Ensure the executable exists
 if [ ! -f "$EXECUTABLE" ]; then
