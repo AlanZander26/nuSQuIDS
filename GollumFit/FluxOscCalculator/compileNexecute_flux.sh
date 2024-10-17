@@ -38,11 +38,15 @@ fi
 FILE_CPP=$1
 INPUT_FLUX=$2
 INPUT_EARTH=$3
-OUTPUT_PATH=$4
-FLUX_NAME=$5
-a=$6
-m0=$7
-NORMALORDERING=$8
+FLUX_NAME=$4
+a=$5
+m0=$6
+NORMALORDERING=$7
+
+point="ADD_${a}_${m0}"
+OUTPUT_PATH=${SCRIPT_DIR}/Fluxes/$point
+
+mkdir -p $OUTPUT_PATH
 
 # Compile main program with ADD.o linked
 echo "Compiling the main program and linking ADD.o..."
@@ -56,8 +60,8 @@ else
 fi
 
 # Check if correct number of arguments are passed
-if [ "$#" -ne 8 ]; then
-    echo "Usage: $0 <FILE_CPP> <INPUT_FLUX> <INPUT_EARTH> <OUTPUT_PATH> <FLUX_NAME> <a> <m0> <NORMALORDERING>"
+if [ "$#" -ne 7 ]; then
+    echo "Usage: $0 <FILE_CPP> <INPUT_FLUX> <INPUT_EARTH> <FLUX_NAME> <a> <m0> <NORMALORDERING>"
     exit 1
 fi
 
@@ -85,4 +89,4 @@ fi
 # Erase executable
 rm $EXECUTABLE
 
-# Example of usage: bash compileNexecute_flux.sh prompt_atmospheric_flux.cpp GollumFit/FluxOscCalculator/AIRS_mceq121_pr_flux_2011_sib_HG_E3.dat GollumFit/FluxOscCalculator/EARTH_MODEL_PREM.dat GollumFit/FluxOscCalculator/Fluxes "new_ddm" 0.5 0.0 true
+# Example of usage: bash compileNexecute_flux.sh prompt_atmospheric_flux.cpp GollumFit/FluxOscCalculator/AIRS_mceq121_pr_flux_2011_sib_HG_E3.dat GollumFit/FluxOscCalculator/EARTH_MODEL_PREM.dat "new_ddm" 0.500000 0.000000 true
