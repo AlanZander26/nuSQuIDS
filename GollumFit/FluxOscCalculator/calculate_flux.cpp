@@ -1,6 +1,6 @@
 #define USE_ADD
 // USE_ADD (ADD), USE_SM_COPIES (SM_Copies), USE_DARKDIM (DarkDim), USE_SM (SM)
-#define IS_ASTRO
+#undef IS_ASTRO
 #include <vector>
 #include <iostream>
 #include <string>
@@ -54,9 +54,7 @@ int main(int argc, char* argv[]){
   if (flux_type == "conventional" | flux_type == "prompt") {
     input_flux_path  = "GollumFit/FluxOscCalculator/Data/v0.6.0_nodeis/ddm_"+flux_type+"_bestfit.dat";
   }
-  else{
-    input_flux_path = "";
-  }
+
 
   input_earth_path = "GollumFit/FluxOscCalculator/Data/EARTH_MODEL_PREM.dat";
 
@@ -140,11 +138,14 @@ int main(int argc, char* argv[]){
   nus_atm.Set_rel_error(error);
   nus_atm.Set_abs_error(error);
 
-
-  // loading kaon and pion flux files
+#ifdef IS_ASTRO
+//do nothing
+#else
+  // loading flux files
   marray<double,2> input_flux = quickread(input_flux_path);
+#endif
 
-  // construct the kaon initial state
+  // construct the initial state
    marray<double,4> inistate {nus_atm.GetNumCos(),nus_atm.GetNumE(),2,numneu};
    std::fill(inistate.begin(),inistate.end(),0.0);
 
