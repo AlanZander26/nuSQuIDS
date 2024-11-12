@@ -4,8 +4,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-//#include <LeptonWeighter/Flux.h>
-//#include <LeptonWeighter/nuSQFluxInterface.h>
+#include <LeptonWeighter/Flux.h>
+#include <LeptonWeighter/nuSQFluxInterface.h>
 #include <nuSQuIDS/marray.h>
 #include <nuSQuIDS/nuSQuIDS.h>
 
@@ -95,14 +95,6 @@ int main(int argc, char* argv[]){
   std::cout<<"Inpath Earth: "<<input_earth_path<<std::endl;
   std::cout<<"Outpath: "<<output_path<<std::endl;
 
-  if (flux_type == "astro") {
-        double baseline_astro_normalization = 1.0e-18; // nu/GeV/s/cm^2/sr
-        double baseline_astro_spectral_index = -2.5;   // center of things
-        auto fluxAstro_ = std::make_shared<LW::PowerLawFlux>(
-            baseline_astro_normalization,
-            baseline_astro_spectral_index
-        );
-  }
     
   const squids::Const units;
 
@@ -148,6 +140,12 @@ int main(int argc, char* argv[]){
    marray<double,1> e_range = nus_atm.GetERange();
 
 if (flux_type == "astro") {
+   double baseline_astro_normalization = 1.0e-18; // nu/GeV/s/cm^2/sr
+    double baseline_astro_spectral_index = -2.5;   // center of things
+    auto fluxAstro_ = std::make_shared<LW::PowerLawFlux>(
+        baseline_astro_normalization,
+        baseline_astro_spectral_index
+        );
     LW::Event scratch_lw_e;
    for ( int ci = 0 ; ci < nus_atm.GetNumCos(); ci++){
      for ( int ei = 0 ; ei < nus_atm.GetNumE(); ei++){
