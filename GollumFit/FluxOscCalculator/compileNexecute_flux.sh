@@ -9,6 +9,13 @@ shift 3   # Shift past the first 5 arguments
 Model=${MODEL^^}
 sed -i "1s/.*/#define USE_${Model}/" calculate_flux.cpp
 
+# Modify the second line of calculate_flux.cpp based on FLUX_TYPE
+if [ "$FLUX_TYPE" == "astro" ]; then
+    sed -i '3s/.*/#define IS_ASTRO/' calculate_flux.cpp
+else
+    sed -i '3s/.*/#undef IS_ASTRO/' calculate_flux.cpp
+fi
+
 # Parse remaining arguments based on MODEL
 case "$MODEL" in
   "ADD")

@@ -1,13 +1,17 @@
 #define USE_ADD
 // USE_ADD (ADD), USE_SM_COPIES (SM_Copies), USE_DARKDIM (DarkDim), USE_SM (SM)
+#define IS_ASTRO
 #include <vector>
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <LeptonWeighter/Flux.h>
-#include <LeptonWeighter/nuSQFluxInterface.h>
 #include <nuSQuIDS/marray.h>
 #include <nuSQuIDS/nuSQuIDS.h>
+
+#ifdef IS_ASTRO
+#include <LeptonWeighter/Flux.h>
+#include <LeptonWeighter/nuSQFluxInterface.h>
+#endif
 
 #ifdef USE_ADD
 #include "ADD/ADD.h"
@@ -48,13 +52,13 @@ int main(int argc, char* argv[]){
   }
 
   if (flux_type == "conventional" | flux_type == "prompt") {
-    input_flux_path  = "Data/v0.6.0_nodeis/ddm_"+flux_type+"_bestfit.dat";
+    input_flux_path  = "GollumFit/FluxOscCalculator/Data/v0.6.0_nodeis/ddm_"+flux_type+"_bestfit.dat";
   }
   else{
     input_flux_path = "";
   }
 
-  input_earth_path = "Data/EARTH_MODEL_PREM.dat";
+  input_earth_path = "GollumFit/FluxOscCalculator/Data/EARTH_MODEL_PREM.dat";
 
   #ifdef USE_ADD
   double a, m0;
@@ -95,6 +99,14 @@ int main(int argc, char* argv[]){
   std::cout<<"Inpath Earth: "<<input_earth_path<<std::endl;
   std::cout<<"Outpath: "<<output_path<<std::endl;
 
+#ifdef IS_ASTRO
+   double baseline_astro_normalization = 1.0e-18; // nu/GeV/s/cm^2/sr
+    double baseline_astro_spectral_index = -2.5;   // center of things
+    auto fluxAstro_ = std::make_shared<LW::PowerLawFlux>(
+        baseline_astro_normalization,
+        baseline_astro_spectral_index
+        );
+#endif
     
   const squids::Const units;
 
@@ -139,33 +151,28 @@ int main(int argc, char* argv[]){
    marray<double,1> cos_range = nus_atm.GetCosthRange();
    marray<double,1> e_range = nus_atm.GetERange();
 
-if (flux_type == "astro") {
-   double baseline_astro_normalization = 1.0e-18; // nu/GeV/s/cm^2/sr
-    double baseline_astro_spectral_index = -2.5;   // center of things
-    auto fluxAstro_ = std::make_shared<LW::PowerLawFlux>(
-        baseline_astro_normalization,
-        baseline_astro_spectral_index
-        );
-    LW::Event scratch_lw_e;
-   for ( int ci = 0 ; ci < nus_atm.GetNumCos(); ci++){
-     for ( int ei = 0 ; ei < nus_atm.GetNumE(); ei++){
-       double enu = e_range[ei]/units.GeV;
-       double cth = cos_range[ci];
+#ifdef IS_ASTRO
 
-       scratch_lw_e.energy=enu;
-       scratch_lw_e.zenith=acos(cth);
+  LW::Event scratch_lw_e;
+  for ( int ci = 0 ; ci < nus_atm.GetNumCos(); ci++){
+    for ( int ei = 0 ; ei < nus_atm.GetNumE(); ei++){
+      double enu = e_range[ei]/units.GeV;
+      double cth = cos_range[ci];
 
-       inistate[ci][ei][0][0] = (*fluxAstro_)(scratch_lw_e);
-       inistate[ci][ei][0][1] = (*fluxAstro_)(scratch_lw_e);
-       inistate[ci][ei][0][2] = (*fluxAstro_)(scratch_lw_e);
+      scratch_lw_e.energy=enu;
+      scratch_lw_e.zenith=acos(cth);
 
-       inistate[ci][ei][1][0] = (*fluxAstro_)(scratch_lw_e);
-       inistate[ci][ei][1][1] = (*fluxAstro_)(scratch_lw_e);
-       inistate[ci][ei][1][2] = (*fluxAstro_)(scratch_lw_e);
-     }
-   }  
-}
-else {
+      inistate[ci][ei][0][0] = (*fluxAstro_)(scratch_lw_e);
+      inistate[ci][ei][0][1] = (*fluxAstro_)(scratch_lw_e);
+      inistate[ci][ei][0][2] = (*fluxAstro_)(scratch_lw_e);
+
+      inistate[ci][ei][1][0] = (*fluxAstro_)(scratch_lw_e);
+      inistate[ci][ei][1][1] = (*fluxAstro_)(scratch_lw_e);
+      inistate[ci][ei][1][2] = (*fluxAstro_)(scratch_lw_e);
+    }
+  }  
+
+#else 
   assert( input_flux.extent(0) == nus_atm.GetNumCos()*nus_atm.GetNumE() );
 
   // Populate only the non-zero entries in the loops
@@ -186,7 +193,7 @@ else {
         inistate[ci][ei][1][2] = input_flux[ci * e_range.size() + ei][7];
     }
   }
-}
+#endif
 
 
   nus_atm.Set_initial_state(inistate,flavor);
