@@ -2,11 +2,9 @@
 
 # Assign common arguments to variables
 FLUX_TYPE=$1 # Flux type ("conventional", "prompt" or "astro")
-INPUT_FLUX=$2
-INPUT_EARTH=$3
-NORMALORDERING=$4
-MODEL=$5  # Model type
-shift 5   # Shift past the first 5 arguments
+NORMALORDERING=$2
+MODEL=$3  # Model type
+shift 3   # Shift past the first 5 arguments
 
 Model=${MODEL^^}
 sed -i "1s/.*/#define USE_${Model}/" calculate_flux.cpp
@@ -50,8 +48,6 @@ esac
 
 # Display parsed variables (for debugging purposes)
 echo "FLUX_TYPE: $FLUX_TYPE"
-echo "INPUT_FLUX: $INPUT_FLUX"
-echo "INPUT_EARTH: $INPUT_EARTH"
 echo "NORMALORDERING: $NORMALORDERING"
 echo "MODEL: $MODEL"
 
@@ -164,7 +160,7 @@ else
 fi
 
 # Run the executable with the provided arguments
-$EXECUTABLE $FLUX_TYPE $INPUT_FLUX $INPUT_EARTH $OUTPUT_PATH $NORMALORDERING $PARAMS
+$EXECUTABLE $FLUX_TYPE $OUTPUT_PATH $NORMALORDERING $PARAMS
 
 # Check if the program executed successfully
 if [ $? -ne 0 ]; then
@@ -177,4 +173,4 @@ fi
 # Erase executable
 rm $EXECUTABLE
 
-# Example of usage: bash compileNexecute_flux.sh "conventional" GollumFit/FluxOscCalculator/Data/v0.6.0_nodeis/ddm_conv_bestfit.dat GollumFit/FluxOscCalculator/Data/EARTH_MODEL_PREM.dat true "ADD" 0.500000 0.000000 
+# Example of usage: bash compileNexecute_flux.sh "conventional" true "ADD" 0.500000 0.000000 

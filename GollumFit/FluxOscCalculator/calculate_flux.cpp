@@ -35,10 +35,8 @@ int main(int argc, char* argv[]){
   std::string input_flux_path, input_earth_path;
   std::string output_path, flux_type;
   flux_type        = argv[1];
-  input_flux_path  = argv[2];
-  input_earth_path = argv[3];
-  output_path      = argv[4];
-  NormalOrdering   = argv[5];
+  output_path      = argv[2];
+  NormalOrdering   = argv[3];
   neutrino_type = both; // If I do not set "both", I get: 'std::runtime_error' what():  nuSQUIDS::Error::Cannot set TauRegeneration to True when NT != 'both'.//neutrino; // Change this to accept also antineutrino or both. 
   // parameters of the theory
 
@@ -49,34 +47,43 @@ int main(int argc, char* argv[]){
       return 1;
   }
 
+  if (flux_type == "conventional" | flux_type == "prompt") {
+    input_flux_path  = "Data/v0.6.0_nodeis/ddm_"+flux_type+"_bestfit.dat";
+  }
+  else{
+    input_flux_path = "";
+  }
+
+  input_earth_path = "Data/EARTH_MODEL_PREM.dat";
+
   #ifdef USE_ADD
   double a, m0;
   unsigned int N_KK = 2;
   numneu = 3*(N_KK+1);
-  if(argc != 8){
-      printf("ERROR:USAGE: the amount of arguments for ADD must be 6. \n");
+  if(argc != 6){
+      printf("ERROR:USAGE: the amount of arguments for ADD must be 4. \n");
       exit(0);
   } else {
-      a                = atof(argv[6]);
-      m0               = atof(argv[7]);
+      a                = atof(argv[4]);
+      m0               = atof(argv[5]);
   }
 
   #elif defined(USE_SM_COPIES)
   double N, mu, m0;
   numneu = 6;
-  if(argc != 9){
-      printf("ERROR:USAGE: the amount of arguments for SM_Copies must be 7. \n");
+  if(argc != 7){
+      printf("ERROR:USAGE: the amount of arguments for SM_Copies must be 5. \n");
       exit(0);
   } else {
-      N                = atof(argv[6]);
-      mu               = atof(argv[7]);
-      m0               = atof(argv[8]);
+      N                = atof(argv[4]);
+      mu               = atof(argv[5]);
+      m0               = atof(argv[6]);
   }
 
   #elif defined(USE_SM)
   numneu = 3;
-  if(argc != 6){
-      printf("ERROR:USAGE: the amount of arguments for the SM must be 4. \n");
+  if(argc != 4){
+      printf("ERROR:USAGE: the amount of arguments for the SM must be 2. \n");
       exit(0);
   }
   #endif
