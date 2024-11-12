@@ -4,8 +4,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-//#include <LeptonWeighter/Flux.h>
-//#include <LeptonWeighter/nuSQFluxInterface.h>
+#include <LeptonWeighter/Flux.h>
+#include <LeptonWeighter/nuSQFluxInterface.h>
 #include <nuSQuIDS/marray.h>
 #include <nuSQuIDS/nuSQuIDS.h>
 
