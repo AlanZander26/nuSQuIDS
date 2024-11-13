@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <algorithm> // For std::find
 #include <nuSQuIDS/marray.h>
 #include <nuSQuIDS/nuSQuIDS.h>
 
@@ -43,18 +44,29 @@ int main(int argc, char* argv[]){
   NormalOrdering   = argv[3];
   neutrino_type = both; // If I do not set "both", I get: 'std::runtime_error' what():  nuSQUIDS::Error::Cannot set TauRegeneration to True when NT != 'both'.//neutrino; // Change this to accept also antineutrino or both. 
   // parameters of the theory
+  
+  std::vector<std::string> hadron_list = {"GSF_1", "GSF_2", "GSF_3", "GSF_4", "GSF_5", "GSF_6"};
+  std::vector<std::string> cr_list = {
+        "he_K+", "he_K-", "he_n", "he_p", "he_pi+", "he_pi-", 
+        "le_K+", "le_K-", "le_pi+", "le_pi-", "vhe1_pi+", "vhe1_pi-", 
+        "vhe3_K+", "vhe3_K-", "vhe3_n", "vhe3_p", "vhe3_pi+", "vhe3_pi-"
+    };
 
-  // Check if flux_type is valid
-  if (flux_type != "conventional" && flux_type != "prompt" && flux_type != "astro") {
-      std::cerr << "Error: Invalid flux_type \"" << flux_type << "\".\n"
-                << "Allowed values are: \"conventional\", \"prompt\", or \"astro\".\n";
-      return 1;
-  }
-
-  if (flux_type == "conventional" | flux_type == "prompt") {
-    input_flux_path  = "GollumFit/FluxOscCalculator/Data/v0.6.0_nodeis/ddm_"+flux_type+"_bestfit.dat";
-  }
-
+     // Check if flux_type is valid and define respectively input_flux_path
+    if (std::find(hadron_list.begin(), hadron_list.end(), flux_type) == hadron_list.end() & std::find(cr_list.begin(), cr_list.end(), flux_type) == cr_list.end()) {
+          if (flux_type != "conventional" && flux_type != "prompt" && flux_type != "astro") {
+              std::cerr << "Error: Invalid flux_type \"" << flux_type << "\".\n"
+                         << "Allowed values are: \"conventional\", \"prompt\", \"astro\", or elements of hadron_list and cr_list.\n";
+            return 1;
+          }
+          else {
+             if (flux_type == "conventional" | flux_type == "prompt") {
+                input_flux_path  = "GollumFit/FluxOscCalculator/Data/v0.6.0_nodeis/ddm_"+flux_type+"_bestfit.dat";
+              }
+          }
+    } else {
+        input_flux_path  = "GollumFit/FluxOscCalculator/Data/v0.6.0_nodeis/ddm_"+flux_type+".dat";
+    }
 
   input_earth_path = "GollumFit/FluxOscCalculator/Data/EARTH_MODEL_PREM.dat";
 
@@ -212,7 +224,7 @@ int main(int argc, char* argv[]){
     for(double lE=lEmin; lE<lEmax; lE+=(lEmax-lEmin)/(double)Nen){
       double E=pow(10.0,lE);
       file_i << lE << " " << cz;
-      for(int fl=0; fl<numneu; fl++){
+      for(int fl=0; fl<3; fl++){ 
         for(int rho=0; rho<2; rho++){
 	file_i << " " <<  nus_atm.EvalFlavor(fl,cz, E, rho);
       }}
@@ -260,7 +272,7 @@ nus_atm.WriteStateHDF5(output_path+"/"+flux_type+"_" +
     for(double lE=lEmin; lE<lEmax; lE+=(lEmax-lEmin)/(double)Nen){
       double E=pow(10.0,lE);
       file << lE << " " << cz;
-      for(int fl=0; fl<numneu; fl++){
+      for(int fl=0; fl<3; fl++){
         for(int rho=0; rho<2; rho++){
 	file << " " <<  nus_atm.EvalFlavor(fl,cz, E, rho);
       }}

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Assign common arguments to variables
-FLUX_TYPE=$1 # Flux type ("conventional", "prompt" or "astro")
+FLUX_TYPE=$1 # Flux type ("conventional", "prompt", "astro" or element of hadron_list/cr_list.)
 NORMALORDERING=$2
 MODEL=$3  # Model type
 shift 3   # Shift past the first 5 arguments
@@ -122,7 +122,7 @@ else
     exit 1
 fi
 
-OUTPUT_PATH=${SCRIPT_DIR}/Fluxes/$MODEL/$point
+OUTPUT_PATH=${SCRIPT_DIR}/Fluxes/$MODEL/$point/$FLUX_TYPE
 
 mkdir -p $OUTPUT_PATH
 
@@ -179,5 +179,8 @@ fi
 
 # Erase executable
 rm $EXECUTABLE
-
+# hadron_list = ['GSF_1', 'GSF_2', 'GSF_3', 'GSF_4', 'GSF_5', 'GSF_6']
+# cr_list     = ['he_K+', 'he_K-', 'he_n', 'he_p', 'he_pi+', 'he_pi-', 'le_K+', 'le_K-',
+#                'le_pi+', 'le_pi-', 'vhe1_pi+', 'vhe1_pi-', 'vhe3_K+', 'vhe3_K-', 'vhe3_n',
+#                'vhe3_p', 'vhe3_pi+', 'vhe3_pi-']
 # Example of usage: bash compileNexecute_flux.sh "conventional" true "ADD" 0.500000 0.000000 
