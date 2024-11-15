@@ -116,7 +116,7 @@ if [ "$MODEL" == "ADD" ]; then
 elif [ "$MODEL" == "SM_Copies" ]; then
     point="${MODEL}_${N}_${mu}_${m0}"
 elif [ "$MODEL" == "SM" ]; then
-    points="${MODEL}"  # No additional parameters for the Standard Model
+    point="${MODEL}"  # No additional parameters for the Standard Model
 else
     echo "Error: Unknown model $MODEL"
     exit 1
