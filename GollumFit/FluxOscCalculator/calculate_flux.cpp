@@ -1,4 +1,4 @@
-#define USE_SM_COPIES
+#define USE_SM
 // USE_ADD (ADD), USE_SM_COPIES (SM_Copies), USE_DARKDIM (DarkDim), USE_SM (SM)
 #define IS_ASTRO
 #include <vector>
