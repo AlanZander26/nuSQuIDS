@@ -1,6 +1,6 @@
-#define USE_SM
+#define USE_SM_COPIES
 // USE_ADD (ADD), USE_SM_COPIES (SM_Copies), USE_DARKDIM (DarkDim), USE_SM (SM)
-#define IS_ASTRO
+#undef IS_ASTRO
 #include <vector>
 #include <iostream>
 #include <string>
@@ -38,12 +38,22 @@ int main(int argc, char* argv[]){
   NeutrinoType neutrino_type;
   bool iinteraction = true; // Otherwise I get: 'std::runtime_error' what():  nuSQUIDS::Error::nuSQuIDs has been initialized without interactions, thus tau regeneration cannot be enabled.
   std::string input_flux_path, input_earth_path;
-  std::string output_path, flux_type;
+  std::string output_path, flux_type, ordering_str;
   flux_type        = argv[1];
   output_path      = argv[2];
-  NormalOrdering   = argv[3];
+  ordering_str     = argv[3];
   neutrino_type = both; // If I do not set "both", I get: 'std::runtime_error' what():  nuSQUIDS::Error::Cannot set TauRegeneration to True when NT != 'both'.//neutrino; // Change this to accept also antineutrino or both. 
   // parameters of the theory
+
+  if      (ordering_str == "true"  || ordering_str == "1" || ordering_str == "True" || ordering_str == "TRUE")
+  NormalOrdering = true;
+else if (ordering_str == "false" || ordering_str == "0" || ordering_str == "False" || ordering_str == "FALSE")
+  NormalOrdering = false;
+else {
+  std::cerr << "Error: NormalOrdering must be “true” or “false”, got “"
+            << ordering_str << "”\n";
+  return 1;
+}
   
   std::vector<std::string> hadron_list = {"GSF_1", "GSF_2", "GSF_3", "GSF_4", "GSF_5", "GSF_6"};
   std::vector<std::string> cr_list = {

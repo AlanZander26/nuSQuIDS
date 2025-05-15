@@ -123,18 +123,42 @@ else
     exit 1
 fi
 
+if [ "$NORMALORDERING" = true ]; then
+    ORDERING="NO"
+else
+    ORDERING="IO"
+fi
+
+# Define the hadron and cr lists
+cr_list=('GSF_1' 'GSF_2' 'GSF_3' 'GSF_4' 'GSF_5' 'GSF_6')
+hadron_list=('he_K+' 'he_K-' 'he_n' 'he_p' 'he_pi+' 'he_pi-' 'le_K+' 'le_K-' \
+         'le_pi+' 'le_pi-' 'vhe1_pi+' 'vhe1_pi-' 'vhe3_K+' 'vhe3_K-' 'vhe3_n' \
+         'vhe3_p' 'vhe3_pi+' 'vhe3_pi-')
+
 # Check if FLUXDIR is an absolute path
 if [[ "$FLUXDIR" =~ ^/ ]]; then
     # FLUXDIR is an absolute path
-    OUTPUT_PATH="${FLUXDIR}/Fluxes/$MODEL/$point/$FLUX_TYPE"  # Path from the absolute path
+    BASE_PATH="${FLUXDIR}/Fluxes/$MODEL/$ORDERING/$point"
 else
     # FLUXDIR is a relative path
-    OUTPUT_PATH="${SCRIPT_DIR}/${FLUXDIR}/Fluxes/$MODEL/$point/$FLUX_TYPE"  # Path relative to the script's directory
+    BASE_PATH="${SCRIPT_DIR}/${FLUXDIR}/Fluxes/$MODEL/$ORDERING/$point"
+fi
+
+# Adjust OUTPUT_PATH based on FLUX_TYPE
+if [[ "$FLUX_TYPE" == "conventional" || "$FLUX_TYPE" == "prompt" || "$FLUX_TYPE" == "astro" ]]; then
+    OUTPUT_PATH="${BASE_PATH}/${FLUX_TYPE}"
+elif [[ " ${cr_list[@]} " =~ " ${FLUX_TYPE} " ]]; then
+    OUTPUT_PATH="${BASE_PATH}/errors" 
+elif [[ " ${hadron_list[@]} " =~ " ${FLUX_TYPE} " ]]; then
+    OUTPUT_PATH="${BASE_PATH}/errors" 
+else
+    echo "Error: FLUX_TYPE '${FLUX_TYPE}' is not recognized." >&2
+    exit 1
 fi
 
 mkdir -p $OUTPUT_PATH
 
-NAME_EXECUTABLE=flux_output_${FLUX_TYPE}_${point}
+NAME_EXECUTABLE=flux_output_${ORDERING}_${FLUX_TYPE}_${point}
 
 # Compile main program.
 if [ "$MODEL" == "SM" ]; then
@@ -187,8 +211,8 @@ fi
 
 # Erase executable
 rm $EXECUTABLE
-# hadron_list = ['GSF_1', 'GSF_2', 'GSF_3', 'GSF_4', 'GSF_5', 'GSF_6']
-# cr_list     = ['he_K+', 'he_K-', 'he_n', 'he_p', 'he_pi+', 'he_pi-', 'le_K+', 'le_K-',
+# cr_list = ['GSF_1', 'GSF_2', 'GSF_3', 'GSF_4', 'GSF_5', 'GSF_6']
+# hadron_list     = ['he_K+', 'he_K-', 'he_n', 'he_p', 'he_pi+', 'he_pi-', 'le_K+', 'le_K-',
 #                'le_pi+', 'le_pi-', 'vhe1_pi+', 'vhe1_pi-', 'vhe3_K+', 'vhe3_K-', 'vhe3_n',
 #                'vhe3_p', 'vhe3_pi+', 'vhe3_pi-']
 # Example of usage: bash compileNexecute_flux.sh . "conventional" true "ADD" 0.500000 0.000000 

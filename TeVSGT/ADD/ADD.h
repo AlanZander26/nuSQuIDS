@@ -15,6 +15,9 @@ namespace nusquids {
             double m0; // Mass of the lightest neutrino state [eV]
             double m1, m2, m3; // Masses of light neutrinos.
             bool NormalOrdering; // Normal neutrino mass ordering hierarchy.
+            double th01, th02, th12;
+
+    
 
             gsl_vector *Lambdaq; // Vector with "squared masses" (lambdas, see paper Machado et.al.) in ascending order.
             gsl_matrix_complex *W; // Transformation matrix between flavor and mass basis.
@@ -31,12 +34,8 @@ namespace nusquids {
                 //===============================        
                 
                 double Deltaq_m21 = 7.65e-05; // Change the squared mass difference here in eV^2
-                double Deltaq_m31 = 0.00247; // Change the squared mass difference here in eV^2
-                double th01=0.563942, th02=0.154085, th12=0.785398;
-            
-                Set_MixingAngle(0,1,th01);
-                Set_MixingAngle(0,2,th02);
-                Set_MixingAngle(1,2,th12);
+                double Deltaq_m31 = 0.00247; // Change the squared mass difference here in eV^2          
+                
 
                 if (NormalOrdering) {
                     m1 = m0;
@@ -48,76 +47,21 @@ namespace nusquids {
                     m3 = m0;
                 }   
 
-                Lambdaq = gsl_vector_alloc(dim_ADD-1);
-                W = gsl_matrix_complex_alloc(dim_ADD, dim_ADD);
-                iniMatrices(Lambdaq, W, th01, th02, th12);
+                //Lambdaq = gsl_vector_alloc(dim_ADD-1);
+                //W = gsl_matrix_complex_alloc(dim_ADD, dim_ADD);
+                //iniMatrices(Lambdaq, W, th01, th02, th12);
+                iniProjectors();
+
+                Set_MixingAngle(0,1,th01);
+                Set_MixingAngle(0,2,th02);
+                Set_MixingAngle(1,2,th12);
 
                 for (int j = 0; j < dim_ADD-1; j++) {
                     Set_SquareMassDifference(j+1,gsl_vector_get(Lambdaq, j));
                 }
             }
 
-        void AddToWriteHDF5(hid_t hdf5_loc_id) const {
-            // Writing the W matrix (already implemented)
-            unsigned int rows = W->size1; // Number of rows in W
-            unsigned int cols = W->size2; // Number of columns in W
-            hsize_t W_dim[2] = {rows, cols * 2}; // HDF5 stores real and imaginary parts separately
-
-            std::vector<double> W_flat(rows * cols * 2); // Flatten the W matrix
-            for (unsigned int i = 0; i < rows; ++i) {
-                for (unsigned int j = 0; j < cols; ++j) {
-                    gsl_complex z = gsl_matrix_complex_get(W, i, j);
-                    W_flat[(i * cols + j) * 2]     = GSL_REAL(z); // Real part
-                    W_flat[(i * cols + j) * 2 + 1] = GSL_IMAG(z); // Imaginary part
-                }
-            }
-            H5LTmake_dataset(hdf5_loc_id, "W_matrix", 2, W_dim, H5T_NATIVE_DOUBLE, W_flat.data());
-
-            // Writing the Lambdaq vector
-            unsigned int len = Lambdaq->size; // Length of the Lambdaq vector
-            hsize_t Lambdaq_dim[1] = {len};   // 1D dataset
-
-            std::vector<double> Lambdaq_flat(len);
-            for (unsigned int i = 0; i < len; ++i) {
-                Lambdaq_flat[i] = gsl_vector_get(Lambdaq, i);
-            }
-            H5LTmake_dataset(hdf5_loc_id, "Lambdaq", 1, Lambdaq_dim, H5T_NATIVE_DOUBLE, Lambdaq_flat.data());
-        }
-
-        void AddToReadHDF5(hid_t hdf5_loc_id) {
-            // Reading the W matrix (already implemented)
-            hsize_t dims[2];
-            H5LTget_dataset_info(hdf5_loc_id, "W_matrix", dims, nullptr, nullptr);
-
-            unsigned int rows = dims[0];
-            unsigned int cols = dims[1] / 2;
-
-            std::unique_ptr<double[]> W_data(new double[dims[0] * dims[1]]);
-            H5LTread_dataset_double(hdf5_loc_id, "W_matrix", W_data.get());
-
-            W = gsl_matrix_complex_alloc(rows, cols); // Allocate memory for W
-            for (unsigned int i = 0; i < rows; ++i) {
-                for (unsigned int j = 0; j < cols; ++j) {
-                    double real_part = W_data[(i * cols + j) * 2];
-                    double imag_part = W_data[(i * cols + j) * 2 + 1];
-                    gsl_complex z = gsl_complex_rect(real_part, imag_part);
-                    gsl_matrix_complex_set(W, i, j, z);
-                }
-            }
-
-            // Reading the Lambdaq vector
-            hsize_t Lambdaq_dims[1];
-            H5LTget_dataset_info(hdf5_loc_id, "Lambdaq", Lambdaq_dims, nullptr, nullptr);
-
-            unsigned int len = Lambdaq_dims[0]; // Length of the Lambdaq vector
-            std::unique_ptr<double[]> Lambdaq_data(new double[len]);
-            H5LTread_dataset_double(hdf5_loc_id, "Lambdaq", Lambdaq_data.get());
-
-            Lambdaq = gsl_vector_alloc(len); // Allocate memory for Lambdaq
-            for (unsigned int i = 0; i < len; ++i) {
-                gsl_vector_set(Lambdaq, i, Lambdaq_data[i]);
-            }
-        }
+ 
 
 
 /*

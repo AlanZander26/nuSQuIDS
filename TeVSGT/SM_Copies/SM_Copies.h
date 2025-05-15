@@ -41,8 +41,6 @@ namespace nusquids {
         Set_MixingAngle(0,1,th01);
         Set_MixingAngle(0,2,th02);
         Set_MixingAngle(1,2,th12);
-        Set_SquareMassDifference(1,Deltaq_m21); 
-        Set_SquareMassDifference(2,Deltaq_m31); 
 
         if (NormalOrdering) {
           m1 = m0;
@@ -58,14 +56,21 @@ namespace nusquids {
         mH2 = mu*m2;
         mH3 = mu*m3;
 
-        double Deltaq_mH1 = std::pow(mH1, 2) - std::pow(m0, 2);
-        double Deltaq_mH2 = std::pow(mH2, 2) - std::pow(m0, 2);
-        double Deltaq_mH3 = std::pow(mH3, 2) - std::pow(m0, 2);
+        double Deltaq_m2 = std::pow(m2, 2) - std::pow(m1, 2);
+        double Deltaq_m3 = std::pow(m3, 2) - std::pow(m1, 2);
+        double Deltaq_mH1 = std::pow(mH1, 2) - std::pow(m1, 2);
+        double Deltaq_mH2 = std::pow(mH2, 2) - std::pow(m1, 2);
+        double Deltaq_mH3 = std::pow(mH3, 2) - std::pow(m1, 2);
           
+        Set_SquareMassDifference(1,Deltaq_m2); // dm^2_2
+        Set_SquareMassDifference(2,Deltaq_m3); // dm^2_3
         Set_SquareMassDifference(3,Deltaq_mH1); // dm^2_H1
         Set_SquareMassDifference(4,Deltaq_mH2); // dm^2_H2
         Set_SquareMassDifference(5,Deltaq_mH3); // dm^2_H3
+
       }
+
+
 
       std::unique_ptr<gsl_matrix_complex,void (*)(gsl_matrix_complex*)> GetPMNS(double th12 = 0.563942, double th13 = 0.154085, double th23 = 0.785398);
 
