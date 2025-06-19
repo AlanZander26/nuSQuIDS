@@ -69,7 +69,6 @@ namespace nusquids {
 
 
             void AddToWriteHDF5(hid_t hdf5_loc_id) const override {
-                std::cout << "[nuSQUIDS_ADD] Writing scalar attributes as dataset to HDF5..." << std::endl;
             
                 std::vector<double> scalars = {
                     static_cast<double>(N_KK),
@@ -80,11 +79,6 @@ namespace nusquids {
             
                 hsize_t dims[1] = { scalars.size() };
                 H5LTmake_dataset(hdf5_loc_id, "ADD_scalars", 1, dims, H5T_NATIVE_DOUBLE, scalars.data());
-            
-                std::cout << "  Wrote dataset 'ADD_scalars' with values:" << std::endl;
-                for (size_t i = 0; i < scalars.size(); ++i) {
-                    std::cout << "    [" << i << "] = " << scalars[i] << std::endl;
-                }
             
                 // Lambdaq
                 if (Lambdaq != nullptr) {
@@ -113,7 +107,6 @@ namespace nusquids {
             
 
             void AddToReadHDF5(hid_t hdf5_loc_id) override {
-                std::cout << "[nuSQUIDS_ADD] AddToReadHDF5() called." << std::endl;
 
                 // Read scalar values from dataset
                 hsize_t dims[1];
@@ -134,11 +127,7 @@ namespace nusquids {
                 m2 = scalars[5];
                 m3 = scalars[6];
                 NormalOrdering = (scalars[7] > 0.5);
-            
-                std::cout << "[nuSQUIDS_ADD] Read dataset 'ADD_scalars' with values:" << std::endl;
-                for (size_t i = 0; i < scalars.size(); ++i) {
-                    std::cout << "    [" << i << "] = " << scalars[i] << std::endl;
-                }
+                
             
                 // Lambdaq
                 H5LTget_dataset_info(hdf5_loc_id, "Lambdaq", dims, nullptr, nullptr);

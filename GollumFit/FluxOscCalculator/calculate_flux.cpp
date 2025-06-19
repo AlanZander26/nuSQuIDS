@@ -1,6 +1,6 @@
 #define USE_ADD
 // USE_ADD (ADD), USE_SM_COPIES (SM_Copies), USE_DARKDIM (DarkDim), USE_SM (SM)
-#undef IS_ASTRO
+#define IS_ASTRO
 #include <vector>
 #include <iostream>
 #include <string>
