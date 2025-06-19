@@ -199,7 +199,8 @@ else
 fi
 
 # Run the executable with the provided arguments
-$EXECUTABLE $FLUX_TYPE $OUTPUT_PATH $NORMALORDERING $PARAMS
+LOGFILE="${OUTPUT_PATH}/run_${FLUX_TYPE}_${MODEL}.log"
+$EXECUTABLE $FLUX_TYPE $OUTPUT_PATH $NORMALORDERING $PARAMS >> "$LOGFILE" 2>&1
 
 # Check if the program executed successfully
 if [ $? -ne 0 ]; then
@@ -216,3 +217,4 @@ rm $EXECUTABLE
 #                'le_pi+', 'le_pi-', 'vhe1_pi+', 'vhe1_pi-', 'vhe3_K+', 'vhe3_K-', 'vhe3_n',
 #                'vhe3_p', 'vhe3_pi+', 'vhe3_pi-']
 # Example of usage: bash compileNexecute_flux.sh . "conventional" true "ADD" 0.500000 0.000000 
+

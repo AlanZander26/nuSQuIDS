@@ -175,6 +175,21 @@ int main () {
 #elif defined(USE_SM)
     nuSQUIDS nus(logspace(E_min*units.GeV,E_max*units.GeV,N_energy_grid), numneu, neutrino_type, false);
 
+    double Deltaq_m21 = 7.65e-05; // Change the squared mass difference here in eV^2
+    double Deltaq_m31 = 0.00247; // Change the squared mass difference here in eV^2
+
+    double Deltaq_m2 = Deltaq_m21;
+    double Deltaq_m3;
+
+    if (NormalOrdering) {
+      Deltaq_m3 = Deltaq_m31;
+    } else {
+      Deltaq_m3 = -Deltaq_m31;
+    }  
+    
+    nus.Set_SquareMassDifference(1,Deltaq_m2); // dm^2_2
+    nus.Set_SquareMassDifference(2,Deltaq_m3); // dm^2_3
+
 #endif
 
           if (medium == "vacuum") {

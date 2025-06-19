@@ -18,7 +18,7 @@ FLUXDIR=/data/user/${USER_COBALT}/GolemFit
 
 # Define the hadron and CR lists
 cr_list=("GSF_1" "GSF_2" "GSF_3" "GSF_4" "GSF_5" "GSF_6")
-hadron_list=("he_K+","he_K-","vhe1_pi+","vhe1_pi-","vhe3_K+","vhe3_K-","vhe3_pi+","vhe3_pi-","vhe3_p","vhe3_n")
+hadron_list=("he_K+" "he_K-" "vhe1_pi+" "vhe1_pi-" "vhe3_K+" "vhe3_K-" "vhe3_pi+" "vhe3_pi-" "vhe3_p" "vhe3_n")
 # Complete list:
 #("he_K+" "he_K-" "he_n" "he_p" "he_pi+" "he_pi-" "le_K+" "le_K-" \
 #        "le_pi+" "le_pi-" "vhe1_pi+" "vhe1_pi-" "vhe3_K+" "vhe3_K-" "vhe3_n" \

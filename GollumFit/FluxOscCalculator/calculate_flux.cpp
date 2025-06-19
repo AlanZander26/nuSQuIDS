@@ -1,4 +1,4 @@
-#define USE_SM_COPIES
+#define USE_ADD
 // USE_ADD (ADD), USE_SM_COPIES (SM_Copies), USE_DARKDIM (DarkDim), USE_SM (SM)
 #undef IS_ASTRO
 #include <vector>
@@ -144,6 +144,21 @@ else {
 
   #elif defined(USE_SM)
     nuSQUIDSAtm<> nus_atm(linspace(czmin,czmax,N_cz_grid), logspace(E_min*units.GeV,E_max*units.GeV,N_energy_grid), numneu, neutrino_type, iinteraction);
+    
+    double Deltaq_m21 = 7.65e-05; // Change the squared mass difference here in eV^2
+    double Deltaq_m31 = 0.00247; // Change the squared mass difference here in eV^2
+
+    double Deltaq_m2 = Deltaq_m21;
+    double Deltaq_m3;
+
+    if (NormalOrdering) {
+      Deltaq_m3 = Deltaq_m31;
+    } else {
+      Deltaq_m3 = -Deltaq_m31;
+    }  
+    
+    nus_atm.Set_SquareMassDifference(1,Deltaq_m2); // dm^2_2
+    nus_atm.Set_SquareMassDifference(2,Deltaq_m3); // dm^2_3
 
   #endif
 
@@ -223,21 +238,28 @@ else {
 
   std::ofstream file_i(output_path+"/"+flux_type+"_flux_initial.txt");
   
-  int Nen =700;
+  int Nen=350;
   int Ncz=100;
   double lEmin=log10(E_min*units.GeV);
   double lEmax=log10(E_max*units.GeV);
+  double dcz = (czmax - czmin) / (Ncz - 1);
+  double dLE = (lEmax - lEmin) / (Nen - 1);
 
   //Writing to the file_i!  
   file_i << "# log10(E) cos(zenith) flux_i . . . ." << std::endl;
-  for(double cz=czmin;cz<czmax;cz+=(czmax-czmin)/(double)Ncz){
-    for(double lE=lEmin; lE<lEmax; lE+=(lEmax-lEmin)/(double)Nen){
-      double E=pow(10.0,lE);
+  for(int ei = 0; ei < Nen; ++ei) {
+    double lE = lEmin + ei * dLE;
+    double E = pow(10.0, lE);
+    
+    for(int czi = 0; czi < Ncz; ++czi) {
+      double cz = czmin + czi * dcz;
+
       file_i << lE << " " << cz;
-      for(int fl=0; fl<3; fl++){ 
-        for(int rho=0; rho<2; rho++){
-	file_i << " " <<  nus_atm.EvalFlavor(fl,cz, E, rho);
-      }}
+      for(int fl = 0; fl < numneu; ++fl) {
+        for(int rho = 0; rho < 2; ++rho) {
+          file_i << " " << nus_atm.EvalFlavor(fl, cz, E, rho);
+        }
+      }
       file_i << std::endl;
     }
     file_i << std::endl;
@@ -246,18 +268,30 @@ else {
 
   nus_atm.EvolveState();
 
+  int neg_count_nu = 0;
+  int neg_count_nubar = 0;
+
+
    for ( int ci = 0 ; ci < nus_atm.GetNumCos(); ci++){
      for ( int ei = 0 ; ei < nus_atm.GetNumE(); ei++){
        double enu = e_range[ei];
        double cth = cos_range[ci];
        for(unsigned int flv = 0; flv < numneu; flv++){
-         if(nus_atm.EvalFlavor(flv,cth,enu,0) < 0)
-           std::cout << "neg nu    propagated fluxes: " << flv << " " << cth << " " << enu/units.GeV << " " << nus_atm.EvalFlavor(flv,cth,enu,0) << std::endl;
-         if(nus_atm.EvalFlavor(flv,cth,enu,1) < 0)
+         if(nus_atm.EvalFlavor(flv,cth,enu,0) < 0){
+          std::cout << "neg nu    propagated fluxes: " << flv << " " << cth << " " << enu/units.GeV << " " << nus_atm.EvalFlavor(flv,cth,enu,0) << std::endl;
+          neg_count_nu += 1;
+          }
+           if(nus_atm.EvalFlavor(flv,cth,enu,1) < 0){
            std::cout << "neg nubar propagated fluxes: " << flv << " " << cth << " " << enu/units.GeV << " " << nus_atm.EvalFlavor(flv,cth,enu,1) << std::endl;
-       }
+           neg_count_nubar += 1;
+          }
+        }
      }
    }
+
+std::cout << "neg nu    propagated fluxes:" << neg_count_nu << std::endl;
+std::cout << "neg nubar propagated fluxes:" << neg_count_nubar << std::endl;
+
 
 nus_atm.WriteStateHDF5(output_path+"/"+flux_type+"_" + 
                        #ifdef USE_ADD
@@ -271,21 +305,26 @@ nus_atm.WriteStateHDF5(output_path+"/"+flux_type+"_" +
                        
   std::ofstream file(output_path+"/"+flux_type+"_flux_final.txt");
 
-  //int Nen =700;
+  //int Nen=350;
   //int Ncz=100;
   //double lEmin=log10(E_min*units.GeV);
   //double lEmax=log10(E_max*units.GeV);
 
   //Writing to the file!  
   file << "# log10(E) cos(zenith) flux_i . . . ." << std::endl;
-  for(double cz=czmin;cz<czmax;cz+=(czmax-czmin)/(double)Ncz){
-    for(double lE=lEmin; lE<lEmax; lE+=(lEmax-lEmin)/(double)Nen){
-      double E=pow(10.0,lE);
+  for(int ei = 0; ei < Nen; ++ei) {
+    double lE = lEmin + ei * dLE;
+    double E = pow(10.0, lE);
+  
+    for(int czi = 0; czi < Ncz; ++czi) {
+      double cz = czmin + czi * dcz;
+  
       file << lE << " " << cz;
-      for(int fl=0; fl<3; fl++){
-        for(int rho=0; rho<2; rho++){
-	file << " " <<  nus_atm.EvalFlavor(fl,cz, E, rho);
-      }}
+      for(int fl = 0; fl < numneu; ++fl) {
+        for(int rho = 0; rho < 2; ++rho) {
+          file << " " << nus_atm.EvalFlavor(fl, cz, E, rho);
+        }
+      }
       file << std::endl;
     }
     file << std::endl;

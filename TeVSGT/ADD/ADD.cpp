@@ -156,7 +156,7 @@ namespace nusquids {
         for (int i = 0; i < 3 * (N_KK + 1); ++i) {
             for (int j = 0; j < 3 * (N_KK + 1); ++j) {
                 value = gsl_matrix_complex_get(aaMM, i, j);
-                newValue = gsl_complex_div_real(value, std::pow(a, 2)/3.92e-2); 
+                newValue = gsl_complex_div_real(value, std::pow(a, 2)/3.92e-2); // this factor is prob wrong
                 gsl_matrix_complex_set(M2, i, j, newValue);
             }
         }    
@@ -223,8 +223,6 @@ namespace nusquids {
 
         gsl_vector_free(Lambdaq_temp);
         gsl_matrix_complex_free(W_sorted);
-        gsl_matrix_complex_free(PMNS);
-        gsl_matrix_complex_free(M2);
    
 
     }
@@ -232,12 +230,6 @@ namespace nusquids {
 
 
     void nuSQUIDS_ADD::iniProjectors(){
-
-        th01=0.563942, th02=0.154085, th12=0.785398;
-        
-        Lambdaq = gsl_vector_alloc(dim_ADD-1);
-        W = gsl_matrix_complex_alloc(dim_ADD, dim_ADD);
-        iniMatrices(Lambdaq, W, th01, th02, th12);
 
         b0_proj.resize(std::vector<size_t>{numneu});
         for(unsigned int flv = 0; flv < numneu; flv++){

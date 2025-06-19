@@ -14,7 +14,7 @@ namespace nusquids {
       // SM_Copies parameters
       double N; // Number of SM copies.
       double mu; // Mass factor mH_i = mu*m_i. Here we assume mu_i=mu for all i.
-      double m0; // Mass of the lightest neutrino state in (eV?? check this).
+      double m0; // Mass of the lightest neutrino state in eV.
       // Masses of light neutrinos.
       double m1, m2, m3;
       // Masses of heavy neutrinos.
@@ -25,10 +25,12 @@ namespace nusquids {
 
     public:
 
+      nuSQUIDS_SM_Copies() : nuSQUIDS() {}
+
       nuSQUIDS_SM_Copies(marray<double,1> E_vector, double N, double mu, double m0, bool NormalOrdering, 
       unsigned int numneu = 3, NeutrinoType NT = both, bool iinteraction = false, 
-      std::shared_ptr<CrossSectionLibrary> ncs = nullptr) : N(N), mu(mu), m0(m0), NormalOrdering(NormalOrdering),
-      nuSQUIDS(E_vector, numneu, NT, iinteraction, ncs)
+      std::shared_ptr<CrossSectionLibrary> ncs = nullptr) : nuSQUIDS(E_vector, numneu, NT, iinteraction, ncs),
+      N(N), mu(mu), m0(m0), NormalOrdering(NormalOrdering)
       {
         //===============================
         // set mixing angles and squared mass differences   //
@@ -69,6 +71,55 @@ namespace nusquids {
         Set_SquareMassDifference(5,Deltaq_mH3); // dm^2_H3
 
       }
+
+
+      void AddToWriteHDF5(hid_t hdf5_loc_id) const override {
+        std::cout << "[nuSQUIDS_SM_Copies] Writing scalar attributes to HDF5..." << std::endl;
+
+        std::vector<double> scalars = {
+          N, mu, m0, m1, m2, m3, mH1, mH2, mH3, static_cast<double>(NormalOrdering)
+        };
+
+        hsize_t dims[1] = { scalars.size() };
+        H5LTmake_dataset(hdf5_loc_id, "SM_Copies_scalars", 1, dims, H5T_NATIVE_DOUBLE, scalars.data());
+
+        std::cout << "  Wrote dataset 'SM_Copies_scalars' with values:" << std::endl;
+        for (size_t i = 0; i < scalars.size(); ++i) {
+          std::cout << "    [" << i << "] = " << scalars[i] << std::endl;
+        }
+      }
+
+
+      void AddToReadHDF5(hid_t hdf5_loc_id) override {
+        std::cout << "[nuSQUIDS_SM_Copies] AddToReadHDF5() called." << std::endl;
+
+        hsize_t dims[1];
+        H5LTget_dataset_info(hdf5_loc_id, "SM_Copies_scalars", dims, nullptr, nullptr);
+
+        if (dims[0] < 10) {
+          throw std::runtime_error("SM_Copies_scalars dataset is too small");
+        }
+
+        std::vector<double> scalars(dims[0]);
+        H5LTread_dataset_double(hdf5_loc_id, "SM_Copies_scalars", scalars.data());
+
+        N = scalars[0];
+        mu = scalars[1];
+        m0 = scalars[2];
+        m1 = scalars[3];
+        m2 = scalars[4];
+        m3 = scalars[5];
+        mH1 = scalars[6];
+        mH2 = scalars[7];
+        mH3 = scalars[8];
+        NormalOrdering = (scalars[9] > 0.5);
+
+        std::cout << "[nuSQUIDS_SM_Copies] Read dataset 'SM_Copies_scalars' with values:" << std::endl;
+        for (size_t i = 0; i < scalars.size(); ++i) {
+          std::cout << "    [" << i << "] = " << scalars[i] << std::endl;
+        }
+      }
+
 
 
 

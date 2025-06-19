@@ -1,0 +1,9 @@
+Universe        = vanilla
+Executable      = FluxesExecuter.sh
+Arguments       = $(flux) $(PARAMS) 
+Log             = logs/errjob_$(Cluster)_$(Process).log
+Output          = outputs/errjob_$(Cluster)_$(Process).out
+Error           = errors/errjob_$(Cluster)_$(Process).err
+RequestCpus = 1
+RequestMemory = 1.9GB
+queue flux, PARAMS from Parameters/Parameters.txt

@@ -1,6 +1,6 @@
 #include <cstring>
-#define SOURCE_DATA_PATH "/home/aurruty/GOLEMSOURCE/sources/nuSQuIDS/data/"
-#define INSTALL_DATA_PATH "/home/aurruty/GOLEMSOURCE/local/share/nuSQuIDS/"
+#define SOURCE_DATA_PATH "/home/azander/GOLEMSOURCE/sources/nuSQuIDS/data/"
+#define INSTALL_DATA_PATH "/home/azander/GOLEMSOURCE/local/share/nuSQuIDS/"
 
 namespace{
 
