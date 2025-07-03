@@ -86,7 +86,7 @@ namespace nusquids {
 
 
 
-    void nuSQUIDS_ADD::iniMatrices(gsl_vector*& Lambdaq, gsl_matrix_complex*& W, double th01, double th02, double th12) {
+    void nuSQUIDS_ADD::iniMatrices(gsl_matrix_complex*& W, double th01, double th02, double th12) {
     
 
         std::unique_ptr<gsl_matrix_complex,void (*)(gsl_matrix_complex*)> PMNS_temp = GetPMNS(th01, th02, th12);
@@ -156,7 +156,7 @@ namespace nusquids {
         for (int i = 0; i < 3 * (N_KK + 1); ++i) {
             for (int j = 0; j < 3 * (N_KK + 1); ++j) {
                 value = gsl_matrix_complex_get(aaMM, i, j);
-                newValue = gsl_complex_div_real(value, std::pow(a, 2)/3.92e-2); // this factor is prob wrong
+                newValue = gsl_complex_div_real(value, std::pow(a, 2)/3.92e-2); 
                 gsl_matrix_complex_set(M2, i, j, newValue);
             }
         }    
@@ -192,38 +192,54 @@ namespace nusquids {
         return Lambdaq_vec[i1] < Lambdaq_vec[i2];
     });
 
+    // --- REORDER W COLUMNS FOR IO ---
+if (!NormalOrdering) {
+    std::vector<size_t> reordered_indices(index_map.size());
+    size_t n_triplets = index_map.size() / 3.;
 
-    // Create sorted matrix W_sorted
+    for (size_t n = 0; n < n_triplets; ++n) {
+        size_t base = 3 * n;
+        // Sorted indices within triplet
+        size_t idx0 = index_map[base];       // smallest λ
+        size_t idx1 = index_map[base + 1];   // middle λ
+        size_t idx2 = index_map[base + 2];   // largest λ
+
+        // Inverted ordering: assign columns in m1, m2, m3 order
+        // i.e., m1 → mid, m2 → high, m3 → low
+        reordered_indices[base + 0] = idx1;  // m1 (→ position 0)
+        reordered_indices[base + 1] = idx2;  // m2 (→ position 1)
+        reordered_indices[base + 2] = idx0;  // m3 (→ position 2)
+    }
+
+    // Use reordered_indices instead of index_map
+    gsl_matrix_complex *W_sorted_IO = gsl_matrix_complex_alloc(W->size1, W->size2);
+    for (size_t j = 0; j < reordered_indices.size(); ++j) {
+        size_t sorted_index = reordered_indices[j];
+        for (size_t i = 0; i < W->size1; ++i) {
+            gsl_complex value = gsl_matrix_complex_get(W, i, sorted_index);
+            gsl_matrix_complex_set(W_sorted_IO, i, j, value);
+        }
+        gsl_vector_set(Lambdaq_temp, j, Lambdaq_vec[reordered_indices[j]]);
+    }
+
+    gsl_matrix_complex_memcpy(W, W_sorted_IO);
+    gsl_matrix_complex_free(W_sorted_IO);
+} else {
+    // Keep existing sorting for NO
     gsl_matrix_complex *W_sorted = gsl_matrix_complex_alloc(W->size1, W->size2);
-
-    // Rearrange columns of W according to sorted eigenvalues and save to W_sorted
     for (size_t j = 0; j < index_map.size(); ++j) {
         size_t sorted_index = index_map[j];
         for (size_t i = 0; i < W->size1; ++i) {
             gsl_complex value = gsl_matrix_complex_get(W, i, sorted_index);
             gsl_matrix_complex_set(W_sorted, i, j, value);
         }
+        gsl_vector_set(Lambdaq_temp, j, Lambdaq_vec[sorted_index]);
     }
+    gsl_matrix_complex_memcpy(W, W_sorted);
+    gsl_matrix_complex_free(W_sorted);
+}
 
-    // Copy the sorted values back to Lambdaq_temp
-    for (size_t i = 0; i < Lambdaq_temp->size; ++i) {
-        gsl_vector_set(Lambdaq_temp, i, Lambdaq_vec[index_map[i]]);
-    }
-
-    // Calculate differences and store in Lambdaq
-    for (size_t i = 0; i < Lambdaq_temp->size - 1; ++i) {
-        double value = gsl_vector_get(Lambdaq_temp, i + 1) - gsl_vector_get(Lambdaq_temp, 0);
-        gsl_vector_set(Lambdaq, i, value);
-    }
-      
-        // Create a temporary matrix to store the sorted columns of W
-
-        // Copy the sorted W back to the original W
-        gsl_matrix_complex_memcpy(W, W_sorted);
-
-        gsl_vector_free(Lambdaq_temp);
-        gsl_matrix_complex_free(W_sorted);
-   
+        gsl_vector_free(Lambdaq_temp);   
 
     }
 

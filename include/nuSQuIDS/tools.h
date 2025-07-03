@@ -428,6 +428,12 @@ gsl_complex to_gsl(const std::complex<double>& c);
 // Added declaration for the linspace_vec function
 std::vector<double> linspace_vec(double a, double b, unsigned int N);
 
+// Bisection method
+double bisection(const std::function<double(double)>& f,
+                 double a, double b,
+                 double tol = 1e-12,
+                 int max_iter = 100);
+
 } // close namespace
 
 #endif

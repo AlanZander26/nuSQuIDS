@@ -871,4 +871,36 @@ std::vector<double> linspace_vec(double a, double b, unsigned int N) {
     return linpoints;
 }
 
+// Bisection method
+double bisection(const std::function<double(double)>& f,
+                 double a, double b,
+                 double tol,
+                 int max_iter) {
+    double fa = f(a);
+    double fb = f(b);
+
+    if (fa * fb >= 0.0) {
+        throw std::runtime_error("Function does not change sign on [a, b]");
+    }
+
+    for (int iter = 0; iter < max_iter; ++iter) {
+        double mid = 0.5 * (a + b);
+        double fmid = f(mid);
+
+        if (std::abs(fmid) < tol || 0.5 * (b - a) < tol) {
+            return mid;
+        }
+
+        if (fa * fmid < 0.0) {
+            b = mid;
+            fb = fmid;
+        } else {
+            a = mid;
+            fa = fmid;
+        }
+    }
+
+    throw std::runtime_error("Bisection method did not converge. Try incrementing the number of iterations or analyzing your function.");
+}
+
 } // close namespace
