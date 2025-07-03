@@ -53,7 +53,7 @@ namespace nusquids {
                 std::vector<double> lambda0_list, lambda1_list, lambda2_list;
 
                 // Solve for λ⁽⁰⁾ — lightest state
-                for (int n = 0; n < N_KK+1; ++n) {
+                for (unsigned int n = 0; n < N_KK+1; ++n) {
                     auto f_lambda = [=](double lambda) {
                         return lambda - M_PI * std::pow(m0 * a * conversion_factor, 2) / std::tan(M_PI * lambda);
                     };
@@ -109,7 +109,7 @@ namespace nusquids {
                 }
                 
                 // Solve λ for A1 → lambda1_list
-                for (int n = 0; n < N_KK+1; ++n) {
+                for (unsigned int n = 0; n < N_KK+1; ++n) {
                     auto f_lambda = [=](double lambda) {
                         return lambda - A1 / std::tan(M_PI * lambda);
                     };
@@ -127,7 +127,7 @@ namespace nusquids {
                 }
                 
                 // Solve λ for A2 → lambda2_list
-                for (int n = 0; n < N_KK+1; ++n) {
+                for (unsigned int n = 0; n < N_KK+1; ++n) {
                     auto f_lambda = [=](double lambda) {
                         return lambda - A2 / std::tan(M_PI * lambda);
                     };
